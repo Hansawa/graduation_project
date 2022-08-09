@@ -1,0 +1,61 @@
+{
+  "spider": "universal",
+  "website": "新浪新闻",
+  "type": "新闻",
+  "index": "https://news.sina.com.cn/roll",
+  "settings": {
+    "USER-AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36 Edg/96.0.1054.62",
+    "DOWNLOAD_DELAY": 1,
+    "RANDOMIZE_DOWNLOAD_DELAY": "True",
+    "ROBOTSTXT_OBEY": "true"
+  },
+  "allowed_domains": ["news.sina.com.cn"],
+  "start_urls": ["https://news.sina.com.cn/roll/#pageid=153&lid=2509&k=&num=50&page=1"],
+  "pagination_url": "https://news.sina.com.cn/roll/#pageid=153&lid=2509&k=&num=50&page={pageNum}",
+  "start_end": [1, 2],
+  "step": 1,
+  "rules": [
+    {
+      "link_extractor": {
+        "allow": "doc-.*\\.shtml",
+        "restrict_xpaths": "//div[@class=\"d_list_txt\"]"
+      },
+      "callback": "parse_detail"
+    }
+  ],
+  "item": {
+    "collection": "sinanews",
+    "attrs": {
+      "title": [
+        {
+          "method": "xpath",
+          "arg": "//h1/text()"
+        }
+      ],
+      "url": [
+        {
+          "method": "respAttr",
+          "arg": "url"
+        }
+      ],
+      "text": [
+        {
+          "method": "xpath",
+          "arg": "//div[@id=\"artibody\"]"
+        }
+      ],
+      "datetime": [
+        {
+          "method": "xpath",
+          "arg": "//div[@class=\"date-source\"]/span[@class=\"date\"]/text()"
+        }
+      ],
+      "website": [
+        {
+          "method": "value",
+          "arg": "新浪新闻"
+        }
+      ]
+    }
+  }
+}
