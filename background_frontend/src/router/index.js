@@ -1,21 +1,34 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router"
+import Login from '/views/Login.vue'
 
 /* 配置路由表。在之后的开发中，会在这里编写组件的路由 */
 const routes = [
+    {
+        path: '/',
+        alias: '/',
+        name: '/',
+        redirect: '/login'
+    },
+    {
+        path: '/login',
+        alias: '/login',
+        name: '/login',
+        component: Login
+    },
     {
         path: '/home',
         alias: '/home',
         name: '/home',
         /* 懒加载 */
         /* 为什么要这样写 */
-        component: () => import('/@/views/Home.vue'),
+        component: () => import('/views/Home.vue'),
         redirect: '/welcome',
         children: [
             {
                 path: '/welcome',
                 alias: '/welcome',
                 name: '/welcome',
-                component: () => import('/@/components/Welcome.vue')
+                component: () => import('/components/Welcome.vue')
             },
         ]
     }

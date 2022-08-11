@@ -91,4 +91,4 @@ function uploadFiles(url, files) {
 }
 
 /* 暴露封装后的方法 */
-export default { get, post, del, put, uploadFile, uploadFiles }
+export { get, post, del, put, uploadFile, uploadFiles }

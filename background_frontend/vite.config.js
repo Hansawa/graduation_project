@@ -12,16 +12,17 @@ export default defineConfig(({command, mode, ssrBuild}) => {
       /*
         root: project root directory, where 'index.html' is located.
         default: process.cwd(), process from node.exe.
-        absolute path (if you move your 'index.html' to 'src' directory).
+        absolute path (if you move your 'index.html' to 'src' directory)
         root: 'D:/graduation_project/background/src', both '/' and '\\'.
-        relative path (relative to current working directory).
+        relative path (relative to current working directory)
         root: './src'
        */
 
       base: '/',
       /*
-        部署到网站后的公共基址，
-        项目中所有文件的路径（不包括在 public 目录中的静态资源）将以它作为基址改写地址
+        部署到网站后的基址，要以 '/' 结尾
+        项目启动后在浏览器开发者模式源代码中（也即部署后）所有文件（不包括在 public 目录中的静态资源）都将以它作为基址，以它为根目录
+        router 也要以它为基址才能实现路由跳转
       */
 
       mode: 'development',
@@ -52,10 +53,15 @@ export default defineConfig(({command, mode, ssrBuild}) => {
 
       resolve: {
         alias: {
-          '/@': path.resolve(__dirname, './src'),
-          '/assets': path.resolve('/@', './assets')
+          /* __dirname 获取当前项目的根目录 */
+          '/assets': path.resolve('./src', './assets'),
+          '/request': path.resolve('./src', './request'),
+          '/views': path.resolve('./src', './views'),
+          '/components': path.resolve('./src', './components')
         },
-        /* 给路径取别名 */
+        /* 给路径取别名，直接使用时只适用于 js，css 块的导入，不适用于 html
+        * 如果要在 html 中使用，先把路径指向的文件导入到 js 中，同时会创建一个新的响应式变量，
+        * 然后在 html 模板中使用 */
 
         extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
         /* 导入时不需要写扩展名的文件 */
@@ -70,8 +76,12 @@ export default defineConfig(({command, mode, ssrBuild}) => {
 
         strictPort: true,
 
-        open: true,
+        // open: true,
         /* 每次启动时是否自动打开页面 */
+
+        /* 热部署 */
+        hotOnly: false,
+        liveReload: true,
 
         proxy: {
           '/api': {

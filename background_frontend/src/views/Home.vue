@@ -3,8 +3,8 @@
     <!-- 头部区域 -->
     <el-header>
       <div>
-        <img src="assets/logo.png" width="50" alt="">
-        <span>校园新闻咨询后台系统</span>
+        <img :src="logoImgUrl" width="50" alt="">
+        <span>新闻聚合后台系统</span>
       </div>
       <el-button type="info" @click="logout">退出</el-button>
     </el-header>
@@ -42,8 +42,9 @@
 
 <script setup>
 import { ref, onBeforeMount } from 'vue'
-import { useRoute } from 'vue-router'
-const $route = useRoute()
+import logoImgUrl from '/assets/logo.png'
+import { useRouter } from 'vue-router'
+const $router = useRouter()
 
 let isCollapse = ref(false)
 
@@ -55,13 +56,13 @@ const menuList = ref([
   {id: 5, tab: '我的账号', path: 'selfaccount', icon: 'Tools'}
   ])
 
-function logout() {
+const logout = () => {
   window.sessionStorage.clear()
-  $route.push('/login')
+  $router.push('/login')
 }
 
 let activePath =  ref('')
-onBeforeMount(() => activePath = $route.path)
+onBeforeMount(() => activePath = $router.path)
 </script>
 
 <style lang="scss" scoped>
