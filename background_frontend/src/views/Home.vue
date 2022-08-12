@@ -1,37 +1,38 @@
 <template>
   <el-container class="home-container">
-    <!-- 头部区域 -->
-    <el-header>
-      <div>
-        <img :src="logoImgUrl" width="50" alt="">
-        <span>新闻聚合后台系统</span>
+    <el-aside width="auto">
+      <!-- 菜单的折叠与展开 -->
+      <div style="height: 50px;">
+        <el-icon :size="25" @click="isCollapse = !isCollapse">
+          <Expand />
+        </el-icon>
       </div>
-      <el-button type="info" @click="logout">退出</el-button>
-    </el-header>
-    <!-- 页面主题区 -->
+      <!-- 侧边栏菜单区 -->
+<!--      background-color="#333744"-->
+      <el-menu
+          class="el-menu-container"
+          text-color="#303133"
+          active-text-color="#409eff"
+          :collapse="isCollapse"
+          :collapse-transition="true"
+          router
+          :default-active="activePath ? activePath : '/welcome'">
+        <el-menu-item
+            v-for="item in menuList"
+            :index="'/'+item.path"
+            :key="item.id">
+          <el-icon><component :is="item.icon" /></el-icon>
+          <template #title>{{ item.tab }}</template>
+        </el-menu-item>
+      </el-menu>
+    </el-aside>
     <el-container>
-      <!-- 侧边栏 -->
-      <el-aside :width="isCollapse ? '64px': '200px'">
-        <!-- 菜单的折叠与展开 -->
-        <div class="toggle-button" @click="isCollapse = !isCollapse">|||</div>
-        <!-- 侧边栏菜单区 -->
-        <el-menu
-            background-color="#333744"
-            text-color="#fff"
-            active-text-color="#ffd04b"
-            :collapse="isCollapse"
-            :collapse-transition="false"
-            router
-            :default-active="activePath ? activePath : '/welcome'">
-          <el-menu-item
-              v-for="item in menuList"
-              :index="'/'+item.path"
-              :key="item.id">
-            <el-icon><component :is="item.icon" /></el-icon>
-            <template #title>{{ item.tab }}</template>
-          </el-menu-item>
-        </el-menu>
-      </el-aside>
+      <el-header>
+        <div>
+          <span>新闻聚合后台系统</span>
+        </div>
+        <el-button type="info" @click="logout">退出</el-button>
+      </el-header>
       <!-- 右侧内容主题 -->
       <el-main>
         <router-view/>
@@ -42,11 +43,10 @@
 
 <script setup>
 import { ref, onBeforeMount } from 'vue'
-import logoImgUrl from '/assets/logo.png'
 import { useRouter } from 'vue-router'
 const $router = useRouter()
 
-let isCollapse = ref(false)
+const isCollapse = ref(false)
 
 const menuList = ref([
   {id: 1, tab: '欢迎！', path: 'welcome', icon: 'StarFilled'},
@@ -66,13 +66,14 @@ onBeforeMount(() => activePath = $router.path)
 </script>
 
 <style lang="scss" scoped>
-.el-menu {
-  border-right: 0;
+.el-menu-container:not(.el-menu--collapse) {
+  width: 200px;
+}
 
-  //.el-menu-item {
-  //  display: flex;
-  //  justify-content: center;
-  //}
+.el-menu {
+  border-right: solid 1px;
+  border-color: #dcdfe6;
+  height: calc(100% - 50px);
 }
 
 .home-container {
@@ -80,12 +81,13 @@ onBeforeMount(() => activePath = $router.path)
 }
 
 .el-header {
-  background-color: #373d41;
+  height: 50px;
+  //background-color: #373d41;
   display: flex;
   justify-content: space-between;
   padding-left: 0;
   align-items: center;
-  color: #fff;
+  //color: #fff;
   font-size: 20px;
 
   div {
@@ -99,7 +101,7 @@ onBeforeMount(() => activePath = $router.path)
 }
 
 .el-aside {
-  background-color: #333744;
+  //background-color: #333744;
 }
 
 .el-main {
@@ -109,10 +111,10 @@ onBeforeMount(() => activePath = $router.path)
 .toggle-button {
   background-color: #6b7486;
   color: #eee;
-  font-size: 10px;
+  //font-size: 10px;
   line-height: 24px;
   text-align: center;
-  letter-spacing: 0.2em;
+  //letter-spacing: 0.2em;
   cursor: pointer;
 }
 </style>
