@@ -1,20 +1,19 @@
 <template>
   <el-container class="home-container">
-    <el-aside width="auto">
+    <el-aside :class="'aside'">
       <!-- 菜单的折叠与展开 -->
-      <div style="height: 50px;">
-        <el-icon :size="25" @click="isCollapse = !isCollapse">
+      <div class="website-name-box">
+        <div class="website-name" v-if="!isCollapse">NewsAggregator</div>
+        <el-icon :size="25" color="#409eff" @click="shiftMenuWidth">
           <Expand />
         </el-icon>
       </div>
       <!-- 侧边栏菜单区 -->
-<!--      background-color="#333744"-->
       <el-menu
-          class="el-menu-container"
           text-color="#303133"
           active-text-color="#409eff"
           :collapse="isCollapse"
-          :collapse-transition="true"
+          :collapse-transition="false"
           router
           :default-active="activePath ? activePath : '/welcome'">
         <el-menu-item
@@ -34,19 +33,26 @@
         <el-button type="info" @click="logout">退出</el-button>
       </el-header>
       <!-- 右侧内容主题 -->
-      <el-main>
+      <el-main style="display: flex">
         <router-view/>
+        <img :src="logoImgUrl" alt="">
       </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script setup>
-import { ref, onBeforeMount } from 'vue'
+import logoImgUrl from '/assets/R-C.jpg'
+import { ref, onBeforeMount, computed } from 'vue'
 import { useRouter } from 'vue-router'
 const $router = useRouter()
 
-const isCollapse = ref(false)
+let isCollapse = ref(false)
+let menuWidth = ref('260px')
+const shiftMenuWidth = () => {
+  isCollapse.value = !isCollapse.value
+  menuWidth.value = isCollapse.value? '64px': '260px'
+}
 
 const menuList = ref([
   {id: 1, tab: '欢迎！', path: 'welcome', icon: 'StarFilled'},
@@ -66,28 +72,46 @@ onBeforeMount(() => activePath = $router.path)
 </script>
 
 <style lang="scss" scoped>
-.el-menu-container:not(.el-menu--collapse) {
-  width: 200px;
-}
-
-.el-menu {
-  border-right: solid 1px;
-  border-color: #dcdfe6;
-  height: calc(100% - 50px);
-}
-
 .home-container {
   height: 100%;
 }
 
+.website-name-box {
+  height: 50px;
+  box-sizing: border-box;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+
+  .website-name {
+    color: #409eff;
+    padding-left: 4px;
+    font-weight: 600;
+  }
+}
+
+.aside {
+  transition: width 300ms ease;
+  width: v-bind(menuWidth);
+  overflow: hidden;
+
+  .el-menu {
+    border-right: 0;
+    height: calc(100% - 50px);
+  }
+
+  .el-menu:not(.el-menu--collapse) {
+    width: 260px;
+  }
+}
+
 .el-header {
   height: 50px;
-  //background-color: #373d41;
   display: flex;
   justify-content: space-between;
   padding-left: 0;
   align-items: center;
-  //color: #fff;
   font-size: 20px;
 
   div {
@@ -98,10 +122,6 @@ onBeforeMount(() => activePath = $router.path)
       margin-left: 15px;
     }
   }
-}
-
-.el-aside {
-  //background-color: #333744;
 }
 
 .el-main {
