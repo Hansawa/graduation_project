@@ -47,8 +47,8 @@ import { ElMessage } from 'element-plus'
 
 /* 这是登录表单的数据绑定对象 */
 let loginForm = ref({
-  adminName: '',
-  password: ''
+  adminName: 'admin',
+  password: '123456'
 })
 /* 表单元素的响应式引用对象 */
 const loginFormRef = ref()
@@ -84,8 +84,8 @@ const login = async () => {
     let resp = await post('/admin/login', loginForm.value)
     if (resp.meta.status !== 200) return ElMessage.error({showClose: true, message: resp.meta.msg})
     else ElMessage.success({showClose: true, message: resp.meta.msg})
-    // window.sessionStorage.setItem('token', resp.token);
-    // window.sessionStorage.setItem('id', resp.data.adminId);
+    window.sessionStorage.setItem('token', resp.token);
+    window.sessionStorage.setItem('id', resp.data.adminId);
     /* 编程式导航（其实就是跳转到/home路径） */
     await $router.push('/home')
   })

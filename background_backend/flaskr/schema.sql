@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS user;
+
+CREATE TABLE user (
+    adminId INTEGER PRIMARY KEY AUTOINCREMENT,
+    adminName TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL
+);

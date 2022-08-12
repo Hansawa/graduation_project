@@ -54,7 +54,7 @@ const menuList = ref([
   {id: 3, tab: '评论管理', path: 'commentmanage', icon: 'ChatDotSquare'},
   {id: 4, tab: '用户管理', path: 'usermanage', icon: 'User'},
   {id: 5, tab: '我的账号', path: 'selfaccount', icon: 'Tools'}
-  ])
+])
 
 const logout = () => {
   window.sessionStorage.clear()
