@@ -1,11 +1,11 @@
 <template>
-  <el-container class="home-container">
-    <el-aside :class="'aside'">
+  <el-container class="layout-box">
+    <el-aside>
       <!-- 菜单的折叠与展开 -->
-      <div class="website-name-box">
+      <div class="logo-box">
         <div class="website-name" v-if="!isCollapse">NewsAggregator</div>
-        <el-icon :size="25" color="#409eff" @click="shiftMenuWidth">
-          <Expand />
+        <el-icon :size="25" color="#409eff" @click="onCollapse">
+          <Expand class="expand"/>
         </el-icon>
       </div>
       <!-- 侧边栏菜单区 -->
@@ -20,7 +20,9 @@
             v-for="item in menuList"
             :index="'/'+item.path"
             :key="item.id">
-          <el-icon><component :is="item.icon" /></el-icon>
+          <el-icon>
+            <component :is="item.icon"/>
+          </el-icon>
           <template #title>{{ item.tab }}</template>
         </el-menu-item>
       </el-menu>
@@ -33,27 +35,30 @@
         <el-button type="info" @click="logout">退出</el-button>
       </el-header>
       <!-- 右侧内容主题 -->
-      <el-main style="display: flex">
+      <el-main>
         <router-view/>
-        <img :src="logoImgUrl" alt="">
       </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script setup>
-import logoImgUrl from '/assets/R-C.jpg'
-import { ref, onBeforeMount, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import {ref, onBeforeMount} from 'vue'
+import {useRouter} from 'vue-router'
+
 const $router = useRouter()
 
-let isCollapse = ref(false)
-let menuWidth = ref('260px')
-const shiftMenuWidth = () => {
+/* 菜单栏折叠所需 */
+let isCollapse = ref(true)
+let menuWidth = ref('64px')
+let iconDeg = ref(0)
+const onCollapse = () => {
   isCollapse.value = !isCollapse.value
-  menuWidth.value = isCollapse.value? '64px': '260px'
+  menuWidth.value = isCollapse.value ? '64px' : '260px'
+  iconDeg.value = isCollapse.value? 0: '180deg'
 }
 
+/* 菜单列表 */
 const menuList = ref([
   {id: 1, tab: '欢迎！', path: 'welcome', icon: 'StarFilled'},
   {id: 2, tab: '新闻管理', path: 'newsmanage', icon: 'Notebook'},
@@ -67,42 +72,43 @@ const logout = () => {
   $router.push('/login')
 }
 
-let activePath =  ref('')
+let activePath = ref('')
 onBeforeMount(() => activePath = $router.path)
 </script>
 
 <style lang="scss" scoped>
-.home-container {
+.layout-box {
   height: 100%;
 }
 
-.website-name-box {
+.logo-box {
   height: 50px;
   box-sizing: border-box;
   padding: 10px;
   display: flex;
-  align-items: center;
   justify-content: space-around;
+  align-items: center;
 
   .website-name {
     color: #409eff;
     padding-left: 4px;
     font-weight: 600;
+    cursor: default;
+  }
+
+  .expand {
+    transition: transform 300ms ease;
+    transform: rotateY(v-bind(iconDeg));
   }
 }
 
-.aside {
+.el-aside {
   transition: width 300ms ease;
   width: v-bind(menuWidth);
-  overflow: hidden;
 
   .el-menu {
     border-right: 0;
     height: calc(100% - 50px);
-  }
-
-  .el-menu:not(.el-menu--collapse) {
-    width: 260px;
   }
 }
 

@@ -16,12 +16,12 @@ const routes = [
         component: Login
     },
     {
-        path: '/home',
-        alias: '/home',
-        name: '/home',
+        path: '/layout',
+        alias: '/layout',
+        name: '/layout',
         /* 懒加载 */
         /* 为什么要这样写 */
-        component: () => import('/views/Home.vue'),
+        component: () => import('/views/Layout.vue'),
         redirect: '/welcome',
         children: [
             {

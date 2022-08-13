@@ -13,11 +13,23 @@
       <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" label-width="0px" class="login_form">
         <!-- 用户名 -->
         <el-form-item label="" prop="adminName">
-          <el-input v-model="loginForm.adminName" prefix-icon="el-icon-s-custom" autofocus="true" placeholder="请输入登录名称"></el-input>
+          <el-input v-model="loginForm.adminName" autofocus="true" placeholder="请输入登录名称">
+            <template #prefix>
+              <el-icon>
+                <Avatar/>
+              </el-icon>
+            </template>
+          </el-input>
         </el-form-item>
         <!-- 密码 -->
         <el-form-item label="" prop="password">
-          <el-input type="password" v-model="loginForm.password" prefix-icon="el-icon-key" placeholder="请输入密码"></el-input>
+          <el-input type="password" v-model="loginForm.password" placeholder="请输入密码">
+            <template #prefix>
+              <el-icon>
+                <Lock/>
+              </el-icon>
+            </template>
+          </el-input>
         </el-form-item>
         <!-- 按钮区域 -->
         <el-form-item label="">
@@ -38,12 +50,13 @@
 </template>
 
 <script setup>
-import logoImgUrl from '/assets/logo.png'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import logoImgUrl from '/assets/logo.svg'
+import {ref} from 'vue'
+import {useRouter} from 'vue-router'
+
 const $router = useRouter()
-import { post } from '/request'
-import { ElMessage } from 'element-plus'
+import {post} from '/request'
+import {ElMessage} from 'element-plus'
 
 /* 这是登录表单的数据绑定对象 */
 let loginForm = ref({
@@ -87,7 +100,7 @@ const login = async () => {
     window.sessionStorage.setItem('token', resp.token);
     window.sessionStorage.setItem('id', resp.data.adminId);
     /* 编程式导航（其实就是跳转到/home路径） */
-    await $router.push('/home')
+    await $router.push('/welcome')
   })
 }
 </script>
@@ -96,7 +109,7 @@ const login = async () => {
 #title {
   color: #0cb494;
   letter-spacing: 20px;
-  font-family: "Yu Mincho Light",sans-serif;
+  font-family: "Yu Mincho Light", sans-serif;
   font-size: 40px;
   margin: 0;
   padding-top: 40px;
