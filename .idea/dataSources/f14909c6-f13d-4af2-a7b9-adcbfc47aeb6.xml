@@ -369,13 +369,13 @@
     <package id="167" parent="1" name="json_tree"/>
     <package id="168" parent="1" name="rtree"/>
     <package id="169" parent="1" name="rtree_i32"/>
-    <table id="170" parent="2" name="sqlite_master">
+    <table id="170" parent="2" name="admin"/>
+    <table id="171" parent="2" name="sqlite_master">
       <System>1</System>
     </table>
-    <table id="171" parent="2" name="sqlite_sequence">
+    <table id="172" parent="2" name="sqlite_sequence">
       <System>1</System>
     </table>
-    <table id="172" parent="2" name="user"/>
     <argument id="173" parent="6">
       <ArgumentDirection>R</ArgumentDirection>
     </argument>
@@ -1333,60 +1333,60 @@
     <argument id="491" parent="159">
       <Position>1</Position>
     </argument>
-    <column id="492" parent="170" name="type">
-      <Position>1</Position>
-      <DataType>text|0s</DataType>
-    </column>
-    <column id="493" parent="170" name="name">
-      <Position>2</Position>
-      <DataType>text|0s</DataType>
-    </column>
-    <column id="494" parent="170" name="tbl_name">
-      <Position>3</Position>
-      <DataType>text|0s</DataType>
-    </column>
-    <column id="495" parent="170" name="rootpage">
-      <Position>4</Position>
-      <DataType>int|0s</DataType>
-    </column>
-    <column id="496" parent="170" name="sql">
-      <Position>5</Position>
-      <DataType>text|0s</DataType>
-    </column>
-    <column id="497" parent="171" name="name">
-      <Position>1</Position>
-    </column>
-    <column id="498" parent="171" name="seq">
-      <Position>2</Position>
-    </column>
-    <column id="499" parent="172" name="adminId">
+    <column id="492" parent="170" name="adminId">
       <Position>1</Position>
       <DataType>INTEGER|0s</DataType>
       <SequenceIdentity>null</SequenceIdentity>
     </column>
-    <column id="500" parent="172" name="adminName">
+    <column id="493" parent="170" name="adminName">
       <Position>2</Position>
       <DataType>TEXT|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="501" parent="172" name="password">
+    <column id="494" parent="170" name="password">
       <Position>3</Position>
       <DataType>TEXT|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <index id="502" parent="172" name="sqlite_autoindex_user_1">
+    <index id="495" parent="170" name="sqlite_autoindex_admin_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>adminName</ColNames>
       <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
-    <key id="503" parent="172">
+    <key id="496" parent="170">
       <ColNames>adminId</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="504" parent="172">
+    <key id="497" parent="170">
       <ColNames>adminName</ColNames>
-      <UnderlyingIndexName>sqlite_autoindex_user_1</UnderlyingIndexName>
+      <UnderlyingIndexName>sqlite_autoindex_admin_1</UnderlyingIndexName>
     </key>
+    <column id="498" parent="171" name="type">
+      <Position>1</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="499" parent="171" name="name">
+      <Position>2</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="500" parent="171" name="tbl_name">
+      <Position>3</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="501" parent="171" name="rootpage">
+      <Position>4</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <column id="502" parent="171" name="sql">
+      <Position>5</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="503" parent="172" name="name">
+      <Position>1</Position>
+    </column>
+    <column id="504" parent="172" name="seq">
+      <Position>2</Position>
+    </column>
   </database-model>
 </dataSource>

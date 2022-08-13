@@ -12,8 +12,8 @@
       <!-- vue的ref属性：通过设置引用，来让script获取该元素对象 -->
       <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" label-width="0px" class="login_form">
         <!-- 用户名 -->
-        <el-form-item label="" prop="adminName">
-          <el-input v-model="loginForm.adminName" autofocus="true" placeholder="请输入登录名称">
+        <el-form-item prop="adminName">
+          <el-input v-model="loginForm.adminName" size="large" autofocus="true" placeholder="请输入登录名称">
             <template #prefix>
               <el-icon>
                 <Avatar/>
@@ -22,8 +22,8 @@
           </el-input>
         </el-form-item>
         <!-- 密码 -->
-        <el-form-item label="" prop="password">
-          <el-input type="password" v-model="loginForm.password" placeholder="请输入密码">
+        <el-form-item prop="password">
+          <el-input type="password" v-model="loginForm.password" size="large" placeholder="请输入密码">
             <template #prefix>
               <el-icon>
                 <Lock/>
@@ -31,8 +31,11 @@
             </template>
           </el-input>
         </el-form-item>
+        <el-form-item>
+          <el-checkbox v-model="rememberMe" label="下次自动登录"/>
+        </el-form-item>
         <!-- 按钮区域 -->
-        <el-form-item label="">
+        <el-form-item>
           <el-col :span="4"></el-col>
           <el-col :span="4">
             <el-button type="info" @click="resetLoginForm">重 置</el-button>
@@ -57,6 +60,9 @@ import {useRouter} from 'vue-router'
 const $router = useRouter()
 import {post} from '/request'
 import {ElMessage} from 'element-plus'
+
+/* 是否自动登录开关 */
+let rememberMe = ref(false)
 
 /* 这是登录表单的数据绑定对象 */
 let loginForm = ref({
@@ -95,8 +101,13 @@ const login = async () => {
     // /* 用了解构赋值，直接将返回的对象中的data对象拿出 */
     /* 响应拦截器只返回了data对象 */
     let resp = await post('/admin/login', loginForm.value)
-    if (resp.meta.status !== 200) return ElMessage.error({showClose: true, message: resp.meta.msg})
-    else ElMessage.success({showClose: true, message: resp.meta.msg})
+    if (resp.status !== 200) return ElMessage.error({showClose: true, message: resp.msg})
+    else {
+      if (rememberMe.value){
+        window.document
+      }
+      ElMessage.success({showClose: true, message: resp.msg})
+    }
     window.sessionStorage.setItem('token', resp.token);
     window.sessionStorage.setItem('id', resp.data.adminId);
     /* 编程式导航（其实就是跳转到/home路径） */
@@ -162,9 +173,9 @@ const login = async () => {
 .login_form {
   position: absolute;
   /* 为什么能够向下移动 */
-  bottom: 15%;
+  bottom: 5%;
   width: 100%;
-  padding: 0 20px;
+  padding: 0 40px;
   /* ? */
   box-sizing: border-box;
 }

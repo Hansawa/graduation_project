@@ -3,7 +3,7 @@
     <el-aside>
       <!-- 菜单的折叠与展开 -->
       <div class="logo-box">
-        <div class="website-name" v-if="!isCollapse">NewsAggregator</div>
+        <div class="website-name" v-show="!isCollapse">NewsAggregator</div>
         <el-icon :size="25" color="#409eff" @click="onCollapse">
           <Expand class="expand"/>
         </el-icon>
@@ -91,8 +91,8 @@ onBeforeMount(() => activePath = $router.path)
 
   .website-name {
     color: #409eff;
-    padding-left: 4px;
-    font-weight: 600;
+    font-weight: bolder;
+    line-height: 25px;
     cursor: default;
   }
 
