@@ -55,9 +55,10 @@ export default defineConfig(({command, mode, ssrBuild}) => {
         alias: {
           /* __dirname 获取当前项目的根目录 */
           '/assets': path.resolve('./src', './assets'),
-          '/request': path.resolve('./src', './request'),
-          '/views': path.resolve('./src', './views'),
-          '/components': path.resolve('./src', './components')
+          '/api': path.resolve('./src', './api'),
+          '/components': path.resolve('./src', './components'),
+          '/layouts': path.resolve('./src', './layouts'),
+          '/views': path.resolve('./src', './views')
         },
         /* 给路径取别名，直接使用时只适用于 js，css 块的导入，不适用于 html
         * 如果要在 html 中使用，先把路径指向的文件导入到 js 中，同时会创建一个新的响应式变量，

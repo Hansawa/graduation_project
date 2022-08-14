@@ -43,10 +43,10 @@
 </template>
 
 <script setup>
-import {ref, onBeforeMount} from 'vue'
+import {ref, onBeforeMount, reactive} from 'vue'
 import {useRouter} from 'vue-router'
 
-const $router = useRouter()
+const router = useRouter()
 
 /* 菜单栏折叠所需 */
 let isCollapse = ref(true)
@@ -59,7 +59,7 @@ const onCollapse = () => {
 }
 
 /* 菜单列表 */
-const menuList = ref([
+const menuList = reactive([
   {id: 1, tab: '欢迎！', path: 'welcome', icon: 'StarFilled'},
   {id: 2, tab: '新闻管理', path: 'newsmanage', icon: 'Notebook'},
   {id: 3, tab: '评论管理', path: 'commentmanage', icon: 'ChatDotSquare'},
@@ -67,13 +67,15 @@ const menuList = ref([
   {id: 5, tab: '我的账号', path: 'selfaccount', icon: 'Tools'}
 ])
 
+/* 清除自动登录 */
 const logout = () => {
+  window.localStorage.clear()
   window.sessionStorage.clear()
-  $router.push('/login')
+  router.push('/login')
 }
 
 let activePath = ref('')
-onBeforeMount(() => activePath = $router.path)
+onBeforeMount(() => activePath = router.path)
 </script>
 
 <style lang="scss" scoped>

@@ -1,19 +1,19 @@
 <template>
   <div class="login_container">
-    <p id="title">
-      新闻聚合后台系统</p>
+    <p id="title">新闻聚合后台系统</p>
     <div class="login_box">
       <!--   头像区域   -->
       <div class="avatar_box">
-        <img :src="logoImgUrl" alt="头像">
+        <img :src="logoImgUrl" alt="Avatar">
       </div>
       <p style="font-size: 20px;text-align: center">管理员登录</p>
       <!-- 登录表单区域 -->
       <!-- vue的ref属性：通过设置引用，来让script获取该元素对象 -->
-      <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" label-width="0px" class="login_form">
+      <el-form ref="formRef" :model="form" :rules="rules" @keyup.enter="onSubmit(formRef)" class="login-form">
         <!-- 用户名 -->
         <el-form-item prop="adminName">
-          <el-input v-model="loginForm.adminName" size="large" autofocus="true" placeholder="请输入登录名称">
+          <el-input v-model="form.adminName" size="large" autofocus="true" clearable
+                    :placeholder="adminNameMessage">
             <template #prefix>
               <el-icon>
                 <Avatar/>
@@ -23,7 +23,8 @@
         </el-form-item>
         <!-- 密码 -->
         <el-form-item prop="password">
-          <el-input type="password" v-model="loginForm.password" size="large" placeholder="请输入密码">
+          <el-input type="password" v-model="form.password" size="large" clearable show-password
+                    :placeholder="passwordMessage">
             <template #prefix>
               <el-icon>
                 <Lock/>
@@ -31,21 +32,12 @@
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item>
-          <el-checkbox v-model="rememberMe" label="下次自动登录"/>
+        <el-form-item prop="rememberMe">
+          <el-checkbox v-model="form.rememberMe" label="记住我"/>
         </el-form-item>
         <!-- 按钮区域 -->
         <el-form-item>
-          <el-col :span="4"></el-col>
-          <el-col :span="4">
-            <el-button type="info" @click="resetLoginForm">重 置</el-button>
-          </el-col>
-          <el-col :span="4"></el-col>
-          <el-col :span="4"></el-col>
-          <el-col :span="4">
-            <el-button type="primary" @click="login">登 录</el-button>
-          </el-col>
-          <el-col :span="4"></el-col>
+          <el-button type="primary" size="large" round style="width: 100%" @click="onSubmit(formRef)">登 录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -54,64 +46,56 @@
 
 <script setup>
 import logoImgUrl from '/assets/logo.svg'
-import {ref} from 'vue'
+import {ref, reactive} from 'vue'
 import {useRouter} from 'vue-router'
-
-const $router = useRouter()
-import {post} from '/request'
+import {post} from '/api'
 import {ElMessage} from 'element-plus'
 
-/* 是否自动登录开关 */
-let rememberMe = ref(false)
-
 /* 这是登录表单的数据绑定对象 */
-let loginForm = ref({
+let form = reactive({
   adminName: 'admin',
-  password: '123456'
+  password: '123456',
+  /* 是否自动登录开关 */
+  rememberMe: false
 })
-/* 表单元素的响应式引用对象 */
-const loginFormRef = ref()
-/* 点击重置按钮，充值登录表单 */
-const resetLoginForm = () => {
-  loginFormRef.value.resetFields()
-}
 
 /* 表单的验证规则对象 */
-const loginFormRules = ref({
+const adminNameMessage = '请输入账号'
+const passwordMessage = '请输入密码'
+const rules = reactive({
   /* 验证用户名是否合法，具体规则对象名要与验证的数据对象名一致 */
   adminName: [
-    {required: true, message: '请输入登录名称', trigger: 'blur'},
+    {required: true, message: adminNameMessage, trigger: 'blur'},
     {min: 3, max: 10, message: "长度在 3 到 10 个字符", trigger: 'blur'}
   ],
   /* 验证密码是否合法 */
   password: [
-    {required: true, message: '请输入登陆密码', trigger: 'blur'},
+    {required: true, message: passwordMessage, trigger: 'blur'},
     {min: 5, max: 15, message: "长度在 5 到 15 个字符", trigger: 'blur'}
   ]
 })
-const login = async () => {
-  /* 表单预验证
-   * validate方法对整个表单进行校验，校验结束后调用作为参数的回调函数，并传入valid参数
-   *（valid取值true or false，当表单数据校验无误为true，校验有误为false）
-   * 可以在这个回调函数中编写请求逻辑
-   *  */
-  await loginFormRef.value.validate(async (valid, fields) => {
+
+/* 表单元素的响应式引用对象 */
+const formRef = ref()
+const router = useRouter()
+const onSubmit = async (formEl) => {
+  if (!formEl) return
+
+  await formEl.validate(async (valid) => {
     if (!valid) return
-    /* 用了await，将返回data对象而不是promise（异步函数都返回包含返回值的promise） */
-    // /* 用了解构赋值，直接将返回的对象中的data对象拿出 */
-    /* 响应拦截器只返回了data对象 */
-    let resp = await post('/admin/login', loginForm.value)
-    if (resp.status !== 200) return ElMessage.error({showClose: true, message: resp.msg})
-    else {
-      if (rememberMe.value){
-        window.document
-      }
-      ElMessage.success({showClose: true, message: resp.msg})
-    }
-    window.sessionStorage.setItem('token', resp.token);
-    window.sessionStorage.setItem('id', resp.data.adminId);
-    /* 编程式导航（其实就是跳转到/home路径） */
-    await $router.push('/welcome')
+
+    /* 查询登录信息是否正确 */
+    let resp = await post('/admin/login', form)
+    if (resp.status !== 200) return ElMessage.error(resp.msg)
+
+    /* 允许自动登录，则在当地存储保存用户 id，下次直接用 id 获取用户资料 */
+    if (form.rememberMe) window.localStorage.setItem('adminId', resp.data.adminId)
+    else window.localStorage.clear()
+    window.sessionStorage.setItem('adminId', resp.data.adminId)
+
+    /* 显示成功登录 Message */
+    ElMessage.success(resp.msg)
+    await router.push(resp.data.routePath)
   })
 }
 </script>
@@ -120,7 +104,8 @@ const login = async () => {
 #title {
   color: #0cb494;
   letter-spacing: 20px;
-  font-family: "Yu Mincho Light", sans-serif;
+  font-family: /*"Yu Mincho Light",*/
+      sans-serif;
   font-size: 40px;
   margin: 0;
   padding-top: 40px;
@@ -136,9 +121,9 @@ const login = async () => {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -40%);
   width: 450px;
-  height: 300px;
+  height: 350px;
   background-color: #fff;
   border-radius: 10px;
 
@@ -170,7 +155,7 @@ const login = async () => {
   }
 }
 
-.login_form {
+.login-form {
   position: absolute;
   /* 为什么能够向下移动 */
   bottom: 5%;
