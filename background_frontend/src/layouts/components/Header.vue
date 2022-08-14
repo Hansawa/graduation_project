@@ -8,6 +8,9 @@
 </template>
 
 <script setup>
+import {useRouter} from 'vue-router'
+
+const router = useRouter()
 /* 清除自动登录 */
 const logout = () => {
   window.localStorage.clear()
@@ -16,7 +19,7 @@ const logout = () => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .el-header {
   height: 50px;
   display: flex;
@@ -25,13 +28,13 @@ const logout = () => {
   align-items: center;
   font-size: 20px;
 
-div {
-  display: flex;
-  align-items: center;
+  div {
+    display: flex;
+    align-items: center;
 
-span {
-  margin-left: 15px;
-}
-}
+    span {
+      margin-left: 15px;
+    }
+  }
 }
 </style>

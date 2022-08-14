@@ -135,14 +135,4 @@ onBeforeMount(() => activePath = router.path)
 .el-main {
   background-color: #eaedf1;
 }
-
-.toggle-button {
-  background-color: #6b7486;
-  color: #eee;
-  //font-size: 10px;
-  line-height: 24px;
-  text-align: center;
-  //letter-spacing: 0.2em;
-  cursor: pointer;
-}
 </style>
