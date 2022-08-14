@@ -8,6 +8,8 @@
 
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+.el-main {
+  background-color: #eaedf1;
+}
 </style>
