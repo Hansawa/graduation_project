@@ -1,8 +1,8 @@
 <template>
   <el-header>
-    <div>
-      <span>新闻聚合后台系统</span>
-    </div>
+    <!--<div>-->
+    <!--  <span>新闻整合后台系统</span>-->
+    <!--</div>-->
     <el-button type="info" @click="logout">退出</el-button>
   </el-header>
 </template>
@@ -23,7 +23,7 @@ const logout = () => {
 .el-header {
   height: 50px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding-left: 0;
   align-items: center;
   font-size: 20px;

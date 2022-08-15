@@ -13,15 +13,53 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')
 def get_menu():
     if request.method == 'GET':
         cli = mongodb.get_cli()
-        menu: dict = cli['bgbe'].get_collection('menu').find_one({'menuName': 'adminMenu'}, {'_id': 0, 'menuName': 0})
-        if menu is None:
-            resultDict['status'] = 200
+        menuList = cli['bgbe'].get_collection('menu').find_one({'menuName': 'adminMenu'}, {'_id': 0, 'menuName': 0})
+        if menuList is None:
+            resultDict['status'] = 401
             resultDict['msg'] = 'Fail to load menu'
         else:
             resultDict['status'] = 200
-            resultDict['msg'] = 'Get menu successful'
+            resultDict['msg'] = 'load menu successful'
             resultDict['data'] = {
-                'menuList': menu['menuList']
+                'menuList': menuList['menuList']
+            }
+
+        return resultDict
+
+
+@bp.route('/crawler/configs/table/column', methods=['GET'])
+def get_crawler_configs_table_column():
+    if request.method == 'GET':
+        cli = mongodb.get_cli()
+        columnList = cli['bgbe'].get_collection('tablecolumn').find_one({'tableName': 'configsTable'}, {'_id': 0, 'tableName': 0})
+        if columnList is None:
+            resultDict['status'] = 401
+            resultDict['msg'] = 'Fail to load table column'
+        else:
+            resultDict['status'] = 200
+            resultDict['msg'] = 'load table column successful'
+            resultDict['data'] = {
+                'columnList': columnList['columnList']
+            }
+
+        return resultDict
+
+
+@bp.route('/crawler/configs/table', methods=['GET'])
+def get_crawler_configs_table():
+    if request.method == 'GET':
+        cli = mongodb.get_cli()
+        table = cli['crawler'].get_collection('configs').find({}, {'_id': 0, 'configName': 1})
+
+        if table is None:
+            resultDict['status'] = 401
+            resultDict['msg'] = 'Fail to load table'
+        else:
+            resultDict['status'] = 200
+            resultDict['msg'] = 'load table successful'
+            rowList = [row for row in table]
+            resultDict['data'] = {
+                'table': rowList
             }
 
         return resultDict
@@ -34,8 +72,8 @@ def login():
 
         db = sqlitedb.get_db()
         admin: dict = db.execute(
-            'SELECT * FROM admin WHERE adminName = ?', (data['adminName'],)
-        ).fetchone()
+            'SELECT * FROM admin WHERE adminName = ?'
+            , (data['adminName'],)).fetchone()
 
         if admin is None:
             resultDict['status'] = 401
@@ -58,17 +96,38 @@ def login():
 
 @bp.route('/check_logged', methods=['GET'])
 def check_logged():
-    data: dict = request.args
+    data = request.args
     db = sqlitedb.get_db()
 
     admin = db.execute(
-        'SELECT adminId FROM admin WHERE adminId = ?', (data['adminId'],)
-    ).fetchone()
+        'SELECT adminId FROM admin WHERE adminId = ?'
+        , (data['adminId'],)).fetchone()
 
     if admin is None:
         resultDict['status'] = 401
         resultDict['msg'] = 'Please login again'
     else:
         resultDict['status'] = 200
+
+    return resultDict
+
+
+@bp.route('/name', methods=['GET'])
+def get_name():
+    data = request.args
+    db = sqlitedb.get_db()
+
+    admin = db.execute('SELECT adminName FROM admin WHERE adminId = ?'
+                             , (data['adminId'],)).fetchone()
+
+    if admin is None:
+        resultDict['status'] = 401
+        resultDict['msg'] = 'Miss name'
+    else:
+        resultDict['status'] = 200
+        resultDict['msg'] = 'Found name successful'
+        resultDict['data'] = {
+            'adminName': admin['adminName']
+        }
 
     return resultDict

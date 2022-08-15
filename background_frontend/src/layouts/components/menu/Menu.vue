@@ -7,7 +7,6 @@
       :collapse-transition="false"
       :router="true"
       :default-active="activePath ? activePath : '/admin/welcome'"
-      default-active=""
       @open="handleOpen"
       @close="handleClose"
   >
@@ -39,7 +38,7 @@ onBeforeMount(async () => {
 
 const router = useRouter()
 let activePath = ref('')
-onBeforeMount(() => activePath = router.path)
+onBeforeMount(() => activePath.value = router.currentRoute.value.path)
 
 const handleOpen = (key, keyPath) => {
 }

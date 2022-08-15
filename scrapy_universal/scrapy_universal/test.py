@@ -72,3 +72,16 @@ a = 'sdfsdfs'
 b = "sdfsdfs"
 
 print(id(a) == id(b))
+
+name = 'chinanews'
+universal = get_config(name)
+config = {
+    'configName': name,
+    'configDict': universal
+}
+
+import pymongo
+
+cli = pymongo.MongoClient('localhost')
+db = cli['crawler'].get_collection('configs').update_one(config, {'$set': config}, upsert=True)
+cli.close()
