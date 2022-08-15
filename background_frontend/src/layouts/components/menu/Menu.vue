@@ -15,9 +15,11 @@
 </template>
 
 <script setup>
-import {onBeforeMount, reactive, ref, defineProps} from 'vue'
-import {useRouter} from 'vue-router'
 import MenuItem from '/layouts/components/menu/MenuItem.vue'
+import {onBeforeMount, reactive, ref} from 'vue'
+import {useRouter} from 'vue-router'
+import {get} from '/api'
+import {ElMessage} from 'element-plus'
 
 const props = defineProps({
   isCollapse: {
@@ -27,28 +29,20 @@ const props = defineProps({
 })
 
 /* 菜单列表 */
-const menuList = reactive([
-  {id: '1', tab: '欢迎！', path: 'welcome', icon: 'StarFilled'},
-  {
-    id: '2', tab: '爬虫管理', path: 'crawler', icon: 'Collection', children: [
-      {id: '2-1', tab: '爬虫设置', path: 'settings', icon: 'Collection'},
-      {id: '2-2', tab: '配置文件', path: 'configs', icon: 'Collection'}
-    ]
-  },
-  {id: '3', tab: '评论管理', path: 'comment', icon: 'ChatDotSquare'},
-  {id: '4', tab: '用户管理', path: 'user', icon: 'User'},
-  {id: '5', tab: '我的账号', path: 'admin', icon: 'Tools'}
-])
+let menuList = ref([])
+onBeforeMount(async () => {
+  const resp = await get('/admin/menu')
+  if (resp.status !== 200) return ElMessage.error(resp.msg)
+  menuList.value = resp.data.menuList
+})
 
 const router = useRouter()
 let activePath = ref('')
 onBeforeMount(() => activePath = router.path)
 
 const handleOpen = (key, keyPath) => {
-  console.log(key, keyPath)
 }
 const handleClose = (key, keyPath) => {
-  console.log(key, keyPath)
 }
 </script>
 

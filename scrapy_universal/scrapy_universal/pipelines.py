@@ -15,7 +15,7 @@ class MongoPipline():
     def __init__(self, mongo_uri, mongo_db):
         self.mongo_uri = mongo_uri
         self.mongo_db = mongo_db
-    
+
     """
         方法类别: 类方法
         可实现的位置: 每一个 spider、pipeline 或 middlewares 都可以存在该类方法
@@ -23,13 +23,14 @@ class MongoPipline():
         作用: 类似于依赖注入（item pipeline 依赖于当前类）。
             实例化当前类并返回注入到 item pipeline 中，且实例化时传入的参数值可以从项目全局配置文件中获取。
     """
+
     @classmethod
     def from_crawler(cls, crawler):
         return cls(
             mongo_uri=crawler.settings.get('MONGO_URI'),
             mongo_db=crawler.settings.get('MONGO_DB')
         )
-    
+
     # 当爬虫打开后，连接 mongodb
     def open_spider(self, spider):
         self.client = pymongo.MongoClient(host=self.mongo_uri)

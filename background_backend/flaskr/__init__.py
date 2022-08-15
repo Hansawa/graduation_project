@@ -8,7 +8,9 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
+        SQLITE_DB=os.path.join(app.instance_path, 'flaskr.sqlite'),
+        MONGODB_URI='localhost',
+        MONGODB_DB='bgbe',
     )
 
     if test_config is None:
@@ -29,9 +31,14 @@ def create_app(test_config=None):
     def hello():
         return 'Hello, World!'
 
-    from . import db
-    db.init_app(app)
+    # 注册数据库
+    from . import sqlitedb
+    sqlitedb.init_app(app)
 
+    from . import mongodb
+    mongodb.init_app(app)
+
+    # 注册蓝图
     from . import admin
     app.register_blueprint(admin.bp)
 

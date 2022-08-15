@@ -28,7 +28,7 @@ const routes = [
                 path: '/welcome',
                 alias: '/welcome',
                 name: '/welcome',
-                component: () => import('/components/Welcome.vue')
+                component: () => import('/views/Welcome.vue')
             },
         ]
     }

@@ -6,18 +6,18 @@ from flask.cli import with_appcontext
 
 
 def get_db():
-    if 'db' not in g:
-        g.db = sqlite3.connect(
-            current_app.config['DATABASE'],
+    if 'sqlitedb' not in g:
+        g.sqlitedb = sqlite3.connect(
+            current_app.config['SQLITE_DB'],
             detect_types=sqlite3.PARSE_DECLTYPES
         )
-        g.db.row_factory = sqlite3.Row
+        g.sqlitedb.row_factory = sqlite3.Row
 
-    return g.db
+    return g.sqlitedb
 
 
 def close_db(e=None):
-    db = g.pop('db', None)
+    db = g.pop('sqlitedb', None)
 
     if db is not None:
         db.close()
@@ -39,5 +39,6 @@ def init_db_command():
 
 
 def init_app(app):
+    # 告诉 Flask 在返回响应后进行清理的时候调用此函数
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)

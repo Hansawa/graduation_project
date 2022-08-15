@@ -39,7 +39,7 @@ const onCollapse = () => {
 .logo-box {
   height: 50px;
   box-sizing: border-box;
-  padding: 10px;
+  padding: 13.5px;
   display: flex;
   justify-content: v-bind(logoBoxJustifyContent);
   align-items: center;
@@ -47,6 +47,7 @@ const onCollapse = () => {
   .website-name {
     color: #409eff;
     font-weight: bolder;
+    font-size: 20px;
     line-height: 25px;
     cursor: default;
   }
