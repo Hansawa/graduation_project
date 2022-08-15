@@ -6,7 +6,8 @@
       :collapse="props.isCollapse"
       :collapse-transition="false"
       :router="true"
-      :default-active="activePath ? activePath : '/welcome'"
+      :default-active="activePath ? activePath : '/admin/welcome'"
+      default-active=""
       @open="handleOpen"
       @close="handleClose"
   >

@@ -29,7 +29,7 @@ const props = defineProps({
   },
   superPath: {
     type: String,
-    default: ''
+    default: '/admin'
   }
 })
 

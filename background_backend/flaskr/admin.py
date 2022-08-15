@@ -50,7 +50,7 @@ def login():
             resultDict['msg'] = 'Login successful'
             resultDict['data'] = {
                 'adminId': admin['adminId'],
-                'routePath': '/welcome'
+                'routePath': '/admin/welcome'
             }
 
         return resultDict

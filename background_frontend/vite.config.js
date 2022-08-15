@@ -58,6 +58,8 @@ export default defineConfig(({command, mode, ssrBuild}) => {
           '/api': path.resolve('./src', './api'),
           '/components': path.resolve('./src', './components'),
           '/layouts': path.resolve('./src', './layouts'),
+          '/plugins': path.resolve('./src', './plugins'),
+          '/stores': path.resolve('./src', './stores'),
           '/views': path.resolve('./src', './views')
         },
         /* 给路径取别名，直接使用时只适用于 js，css 块的导入，不适用于 html

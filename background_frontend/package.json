@@ -13,9 +13,9 @@
     "axios": "^1.0.0-alpha.1",
     "element-plus": "^2.2.13",
     "normalize.css": "^8.0.1",
+    "pinia": "^2.0.18",
     "vue": "^3.2.37",
-    "vue-router": "^4.0.13",
-    "vuex": "^4.0.2"
+    "vue-router": "^4.0.13"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^3.0.0",
