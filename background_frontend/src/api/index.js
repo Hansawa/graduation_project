@@ -35,15 +35,15 @@ function post(url, data) {
 }
 
 /* 给parms赋予默认值 */
-function get(url, params={}) {
+function get(url, params = {}) {
     return instance({
         method: 'GET',
         url,
         params
-    });
+    })
 }
 
-function del(url, params={}) {
+function del(url, params = {}) {
     return instance({
         method: 'DELETE',
         url,
@@ -90,5 +90,14 @@ function uploadFiles(url, files) {
     })
 }
 
+function downloadFile(url, params = {}) {
+    return instance({
+        responseType: 'arraybuffer',
+        method: 'GET',
+        url,
+        params,
+    })
+}
+
 /* 暴露封装后的方法 */
-export { get, post, del, put, uploadFile, uploadFiles }
+export {get, post, del, put, uploadFile, uploadFiles, downloadFile}

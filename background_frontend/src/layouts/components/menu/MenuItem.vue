@@ -24,7 +24,7 @@ import Menu from '/layouts/components/menu/MenuItem.vue'
 
 const props = defineProps({
   menuList: {
-    type: Object,
+    type: Array,
     required: true
   },
   superPath: {
