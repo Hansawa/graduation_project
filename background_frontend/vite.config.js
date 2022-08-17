@@ -74,10 +74,10 @@ export default defineConfig(({command, mode, ssrBuild}) => {
         host: 'localhost',
         /* 该项目启动时，服务器要监听的 ip 地址，一有对该地址发送请求便返回页面 */
 
-        port: 8081,
+        port: 8083,
         /* 服务器监听的 ip 地址的端口号 */
 
-        strictPort: true,
+        strictPort: false,
 
         // open: true,
         /* 每次启动时是否自动打开页面 */

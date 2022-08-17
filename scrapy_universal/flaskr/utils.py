@@ -13,6 +13,15 @@ import json
 # json.loads()：将字符串转换成 python 对象，如字典，列表，基本类型等。在此为转换成字典
 # os.path.join() 会将每一个字符串用路径分隔符连接起来
 def get_config(name):
-    path = join(dirname(realpath(__file__)), 'configs', f'{name}.json')
+    path = join(dirname(realpath(__file__)), 'crawler_configs', f'{name}.json')
     with open(path, 'r', encoding='utf8') as f:
         return json.loads(f.read())
+
+
+# 请求结果
+respBody: dict = {}
+respBody['status']: int
+respBody['msg']: str
+respBody['token']: str
+respBody['data']: dict
+

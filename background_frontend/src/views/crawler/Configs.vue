@@ -80,7 +80,6 @@
     </el-upload>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
         <el-button type="success" @click="submitUpload">Upload</el-button>
       </span>
     </template>
@@ -90,7 +89,7 @@
 <script setup>
 import {reactive, ref, onBeforeMount} from 'vue'
 import {get, downloadFile, uploadFile} from '/api'
-import {ElMessage, ElMessageBox} from 'element-plus'
+import {ElMessage, ElNotification} from 'element-plus'
 
 /* 获取配置文件表的列名 */
 // let columnList = ref()
@@ -100,19 +99,21 @@ import {ElMessage, ElMessageBox} from 'element-plus'
 //   else columnList.value = resp.data.columnList
 // })
 
-/* 获取配置文件表 */
+/* 配置文件表定义 */
 let table = ref({
   columnList: null,
   rowList: null
 })
-onBeforeMount(async () => {
+/* 获取配置文件表 */
+const getTable = async () => {
   const resp = await get('/admin/crawler/configs/table')
   if (resp.status !== 200) return ElMessage.error(resp.msg)
   else {
     table.value.columnList = resp.data.columnList
     table.value.rowList = resp.data.rowList
   }
-})
+}
+onBeforeMount(getTable)
 /* table-column 元素的 label 属性的值设置为Pascal命名 */
 const toPascal = (column) => {
   let str = column.toString()
@@ -144,6 +145,7 @@ const handleDownload = async (index, row) => {
 /* 对话框 */
 let dialogVisible = ref(false)
 const handleClose = (done) => {
+  getTable()
   done()
 }
 
@@ -151,14 +153,14 @@ const handleClose = (done) => {
 const uploadRef = ref()
 let fileList = ref()
 /* 上传按钮点击事件 */
-const submitUpload = async () => {
+const submitUpload = () => {
   uploadRef.value.submit()
 }
 /* 自定义上传请求 */
 const uploadConfig = async (option) => {
   const resp = await uploadFile('/admin/crawler/config', option.file)
-  if (resp.status !== 200) return ElMessage.error(resp.msg)
-  else ElMessage.success(resp.msg)
+  if (resp.status !== 200) return ElNotification.error({message: resp.msg})
+  else ElNotification.success({message: resp.msg})
 }
 
 const handleCurrentChange = (currentRow, oldCurrentRow) => {

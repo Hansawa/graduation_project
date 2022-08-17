@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="flaskr" uuid="f14909c6-f13d-4af2-a7b9-adcbfc47aeb6">
+    <data-source source="LOCAL" name="flaskr" uuid="43aa719c-abb8-4e03-af9d-5765d92135c0">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:D:\graduation_project\instance\flaskr.sqlite</jdbc-url>
+      <jdbc-url>jdbc:sqlite:D:\graduation_project\scrapy_universal\scrapy_universal\flaskr\instance\flaskr.sqlite</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
       <libraries>
         <library>

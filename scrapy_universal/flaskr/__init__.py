@@ -5,12 +5,12 @@ from flask import Flask
 
 
 def create_app(test_config=None):
-    # flask 实例名
+    # flaskr 路径
     flaskrPath = os.path.join(os.getcwd(), __name__.split('.')[1])
     # create and configure the app, 添加了 instance_relative_config 为 True 后配置文件存放在 instance 目录里
     app = Flask(__name__, instance_relative_config=True, instance_path=os.path.join(flaskrPath, 'instance'))
     app.config.from_mapping(
-        SECRET_KEY='dev1',
+        SECRET_KEY='dev2',
         SQLITE_DB=os.path.join(app.instance_path, 'flaskr.sqlite'),
         MONGODB_URI='localhost',
         CRAWLER_CONFIGS_DIR=os.path.join(flaskrPath, 'crawler_configs')
@@ -33,17 +33,14 @@ def create_app(test_config=None):
         return 'Hello, World!'
 
     # 注册数据库
-    from background_backend.flaskr.DBHelper import sqlitedb
+    from scrapy_universal.flaskr.DBHelper import sqlitedb
     sqlitedb.init_app(app)
 
-    from background_backend.flaskr.DBHelper import mongodb
+    from scrapy_universal.flaskr.DBHelper import mongodb
     mongodb.init_app(app)
 
     # 注册蓝图
-    from .blueprints.admin import admin
-    app.register_blueprint(admin.bp)
-
-    from .blueprints.admin import crawler
+    from .blueprints import crawler
     app.register_blueprint(crawler.bp)
 
     return app
