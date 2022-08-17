@@ -7,13 +7,14 @@ from flask import Flask
 def create_app(test_config=None):
     # flaskr 路径
     flaskrPath = os.path.join(os.getcwd(), __name__.split('.')[1])
+    rootPath = os.getcwd()
     # create and configure the app, 添加了 instance_relative_config 为 True 后配置文件存放在 instance 目录里
     app = Flask(__name__, instance_relative_config=True, instance_path=os.path.join(flaskrPath, 'instance'))
     app.config.from_mapping(
         SECRET_KEY='dev2',
         SQLITE_DB=os.path.join(app.instance_path, 'flaskr.sqlite'),
         MONGODB_URI='localhost',
-        CRAWLER_CONFIGS_DIR=os.path.join(flaskrPath, 'crawler_configs')
+        CRAWLER_CONFIGS_DIR=os.path.join(rootPath, 'crawler_configs')
     )
 
     if test_config is None:
@@ -33,10 +34,10 @@ def create_app(test_config=None):
         return 'Hello, World!'
 
     # 注册数据库
-    from scrapy_universal.flaskr.DBHelper import sqlitedb
+    from news_crawler.flaskr.DBHelper import sqlitedb
     sqlitedb.init_app(app)
 
-    from scrapy_universal.flaskr.DBHelper import mongodb
+    from news_crawler.flaskr.DBHelper import mongodb
     mongodb.init_app(app)
 
     # 注册蓝图
