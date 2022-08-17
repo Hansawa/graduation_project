@@ -46,4 +46,7 @@ def create_app(test_config=None):
     from .blueprints.admin import crawler
     app.register_blueprint(crawler.bp)
 
+    from .blueprints.admin import raw_news
+    app.register_blueprint(raw_news.bp)
+
     return app

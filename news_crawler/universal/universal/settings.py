@@ -21,7 +21,6 @@ NEWSPIDER_MODULE = 'universal.spiders'
 
 # Database info
 MONGO_URI = 'localhost'
-MONGO_DB = 'news'
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html

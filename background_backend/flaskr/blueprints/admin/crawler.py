@@ -1,33 +1,14 @@
 import os
 
-from flask import Blueprint, current_app, request, session, send_from_directory, make_response, send_file
-from background_backend.flaskr.DBHelper import sqlitedb
+from flask import Blueprint, current_app, request, send_file
 from background_backend.flaskr.DBHelper import mongodb
 from background_backend.flaskr.utils import respBody
 import requests
+
 # from concurrent.futures import ThreadPoolExecutor
 # executor = ThreadPoolExecutor(3)
 
 bp = Blueprint('crawler', __name__, url_prefix='/admin/crawler')
-
-# 获取表头
-# @bp.route('/crawler/configs/table/column', methods=['GET'])
-# def get_crawler_configs_table_column():
-#     if request.method == 'GET':
-#         cli = mongodb.get_cli()
-#         result = cli['bgbe'].get_collection('tablecolumn')\
-#             .find_one({'tableName': 'configsTable'}, {'_id': 0, 'tableName': 0})
-#         if result is None:
-#             respBody['status'] = 401
-#             respBody['msg'] = 'Fail to load table column'
-#         else:
-#             respBody['status'] = 200
-#             respBody['msg'] = 'load table column successful'
-#             respBody['data'] = {
-#                 'columnList': result['columnList']
-#             }
-#
-#         return respBody
 
 
 @bp.route('/configs/table', methods=['GET'])
@@ -86,4 +67,14 @@ def post_crawler_config():
 @bp.route('/run', methods=['GET'])
 def run_crawler():
     if request.method == 'GET':
-        resp = requests.get()
+        params: dict = request.args
+        resp = requests.get('http://localhost:8081/crawler/run', params)
+
+        if resp.status_code != 200:
+            respBody['status'] = resp.status_code
+            respBody['msg'] = 'Fail to run crawler'
+        else:
+            respBody['status'] = resp.status_code
+            respBody['msg'] = 'Run crawler successful'
+
+        return respBody

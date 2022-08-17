@@ -6,7 +6,8 @@
   "settings": {
     "USER-AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36 Edg/96.0.1054.62",
     "RANDOMIZE_DOWNLOAD_DELAY": "True",
-    "ROBOTSTXT_OBEY": "true"
+    "ROBOTSTXT_OBEY": "true",
+    "MONGO_DB": "raw_news"
   },
   "allowed_domains": ["www.bjnews.com.cn"],
   "start_urls": ["https://www.bjnews.com.cn/news"],

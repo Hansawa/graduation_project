@@ -171,6 +171,8 @@ const handleCurrentChange = (currentRow, oldCurrentRow) => {
 <style lang="scss" scoped>
 .configs {
   height: 100%;
+  display: flex;
+  flex-direction: column;
 
   .header {
     display: flex;
