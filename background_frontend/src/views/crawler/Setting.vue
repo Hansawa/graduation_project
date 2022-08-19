@@ -1,7 +1,7 @@
 <template>
-  <div class="settings">
+  <div class="setting">
     <div class="header">
-      爬虫管理 / 爬虫设置
+      爬虫设置
     </div>
     <el-row>
       <el-col :span="4">

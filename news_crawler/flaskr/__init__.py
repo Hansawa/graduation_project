@@ -14,7 +14,8 @@ def create_app(test_config=None):
         SECRET_KEY='dev2',
         SQLITE_DB=os.path.join(app.instance_path, 'flaskr.sqlite'),
         MONGODB_URI='localhost',
-        CRAWLER_CONFIGS_DIR=os.path.join(rootPath, 'crawler_configs')
+        CRAWLER_CONFIGS_DIR=os.path.join(rootPath, 'crawler_configs'),
+        TEST_CRAWLER_CONFIGS_DIR=os.path.join(rootPath, 'crawler_configs', 'test')
     )
 
     if test_config is None:
@@ -27,6 +28,7 @@ def create_app(test_config=None):
     # ensure the instance folder exists
     pathlib.Path(app.instance_path).mkdir(parents=True, exist_ok=True)
     pathlib.Path(app.config['CRAWLER_CONFIGS_DIR']).mkdir(parents=True, exist_ok=True)
+    pathlib.Path(app.config['TEST_CRAWLER_CONFIGS_DIR']).mkdir(parents=True, exist_ok=True)
 
     # a simple page that says hello
     @app.route('/hello')

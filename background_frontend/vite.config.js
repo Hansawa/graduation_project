@@ -77,7 +77,7 @@ export default defineConfig(({command, mode, ssrBuild}) => {
         port: 8082,
         /* 服务器监听的 ip 地址的端口号 */
 
-        strictPort: false,
+        strictPort: true,
 
         // open: true,
         /* 每次启动时是否自动打开页面 */

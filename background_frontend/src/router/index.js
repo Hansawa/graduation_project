@@ -32,26 +32,61 @@ const routes = [
                 path: 'crawler',
                 name: 'crawler',
                 component: () => import('/views/crawler/index.vue'),
-                redirect: {name: 'crawlerSettings'},
+                redirect: {name: 'crawlerSetting'},
                 meta: {
                     title: '爬虫管理'
                 },
                 children: [
                     {
-                        path: 'settings',
-                        name: 'crawlerSettings',
-                        component: () => import('/views/crawler/Settings.vue'),
+                        path: 'setting',
+                        name: 'crawlerSetting',
+                        component: () => import('/views/crawler/Setting.vue'),
                         meta: {
                             title: '爬虫设置'
                         }
                     },
                     {
-                        path: 'configs',
-                        name: 'crawlerConfigs',
-                        component: () => import('/views/crawler/Configs.vue'),
+                        path: 'config',
+                        name: 'crawlerConfig',
+                        component: () => import('/views/crawler/config/index.vue'),
+                        redirect: {name: 'crawlerTestConfig'},
                         meta: {
-                            title: '配置文件'
-                        }
+                            title: '爬虫配置'
+                        },
+                        children: [
+                            {
+                                path: 'test',
+                                name: 'crawlerTest',
+                                component: () => import('/views/crawler/config/test/index.vue'),
+                                redirect: {name: 'crawlerTestConfig'},
+                                children: [
+                                    {
+                                        path: 'config',
+                                        name: 'crawlerTestConfig',
+                                        component: () => import('/views/crawler/config/test/Test.vue'),
+                                        meta: {
+                                            title: '测试配置表'
+                                        }
+                                    },
+                                    {
+                                        path: ':_id',
+                                        name: 'crawlerEditTest',
+                                        component: () => import('/views/crawler/config/test/EditTest.vue'),
+                                        meta: {
+                                            title: '编辑与测试'
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                path: 'final',
+                                name: 'crawlerFinalConfig',
+                                component: () => import('/views/crawler/config/Final.vue'),
+                                meta: {
+                                    title: '最终配置表'
+                                }
+                            }
+                        ]
                     },
                     {
                         path: 'raw_news',
@@ -59,7 +94,7 @@ const routes = [
                         component: () => import('/views/crawler/index.vue'),
                         redirect: {name: 'rawNewsWebsite'},
                         meta: {
-                            title: '未处理新闻'
+                            title: '未加工新闻'
                         },
                         children: [
                             {
@@ -67,7 +102,7 @@ const routes = [
                                 name: 'rawNewsWebsite',
                                 component: () => import('/views/crawler/raw_news/Website.vue'),
                                 meta: {
-                                    title: '新闻网站'
+                                    title: '新闻网站列表'
                                 }
                             },
                             {
@@ -76,11 +111,11 @@ const routes = [
                                 component: () => import('/views/crawler/raw_news/News.vue'),
                                 props: true,
                                 meta: {
-                                    title: '新闻'
+                                    title: '新闻列表'
                                 }
                             },
                             {
-                                path: ':websiteName/:title',
+                                path: ':websiteName/:_id',
                                 name: 'rawNewsWebsiteNewsDetail',
                                 component: () => import('/views/crawler/raw_news/NewsDetail.vue'),
                                 props: true,
@@ -136,10 +171,12 @@ router.beforeEach(async (to, from) => {
         return '/admin/login'
     }
 
+    /* !!!! */
     let title = []
     const matched = to.matched
-    for (let i = 0; i < matched.length; i++) {
-        title.push(matched.meta.title)
+    for (let i = 1; i < matched.length; i++) {
+        title.push(matched[i].meta.title)
+        if (i > 1) break
     }
     window.document.title = title.join(' | ')
     return true

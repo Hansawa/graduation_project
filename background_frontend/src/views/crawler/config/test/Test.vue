@@ -1,7 +1,12 @@
 <template>
-  <div class="configs">
+  <div class="test">
     <div class="header">
-      <span>爬虫管理 / 配置文件</span>
+      <div class="title">
+        <span>爬虫配置 |&nbsp;</span>
+        <el-breadcrumb separator=">">
+          <el-breadcrumb-item>{{ $router.currentRoute.value.meta.title }}</el-breadcrumb-item>
+        </el-breadcrumb>
+      </div>
       <el-button
           type="primary"
           size="small"
@@ -26,9 +31,9 @@
         <template #default="scope">
           <el-button
               size="small"
-              @click="handleEdit(scope.$index, scope.row)"
+              @click="handleEditTest(scope.$index, scope.row)"
           >
-            编辑
+            编辑与测试
           </el-button>
           <el-button
               type="primary"
@@ -87,17 +92,12 @@
 </template>
 
 <script setup>
-import {reactive, ref, onBeforeMount} from 'vue'
+import {ref, onBeforeMount} from 'vue'
 import {get, downloadFile, uploadFile} from '/api'
 import {ElMessage, ElNotification} from 'element-plus'
+import {useRouter} from 'vue-router'
 
-/* 获取配置文件表的列名 */
-// let columnList = ref()
-// onBeforeMount(async () => {
-//   const resp = await get('/admin/crawler/configs/table/column')
-//   if (resp.status !== 200) return ElMessage.error(resp.msg)
-//   else columnList.value = resp.data.columnList
-// })
+const $router = useRouter()
 
 /* 配置文件表定义 */
 let table = ref({
@@ -106,9 +106,10 @@ let table = ref({
 })
 /* 获取配置文件表 */
 const getTable = async () => {
-  const resp = await get('/admin/crawler/configs/table')
+  const resp = await get('/admin/crawler/config/test/all')
   if (resp.status !== 200) return ElMessage.error(resp.msg)
   else {
+    ElMessage.success(resp.msg)
     table.value.columnList = resp.data.columnList
     table.value.rowList = resp.data.rowList
   }
@@ -123,7 +124,7 @@ const toPascal = (column) => {
 /* 下载配置文件 */
 const handleDownload = async (index, row) => {
   const configName = row['configName']
-  const resp = await downloadFile('/admin/crawler/config', {configName})
+  const resp = await downloadFile('/admin/crawler/config/test', {configName})
 
   if (resp == null) return ElMessage.error('fail to download config file')
   else {
@@ -158,9 +159,15 @@ const submitUpload = () => {
 }
 /* 自定义上传请求 */
 const uploadConfig = async (option) => {
-  const resp = await uploadFile('/admin/crawler/config', option.file)
+  const resp = await uploadFile('/admin/crawler/config/test', option.file)
   if (resp.status !== 200) return ElNotification.error({message: resp.msg})
   else ElNotification.success({message: resp.msg})
+}
+
+/* 编辑与测试 */
+const handleEditTest = (index, row) => {
+  const configName = row['_id']
+  $router.push({name: 'crawlerEditTest', params: {configName}})
 }
 
 const handleCurrentChange = (currentRow, oldCurrentRow) => {
@@ -169,7 +176,7 @@ const handleCurrentChange = (currentRow, oldCurrentRow) => {
 </script>
 
 <style lang="scss" scoped>
-.configs {
+.test {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -178,10 +185,16 @@ const handleCurrentChange = (currentRow, oldCurrentRow) => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
 
-  .el-table {
-    max-height: calc(100% - 28.4px)
+    .title {
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-end;
+
+      .el-breadcrumb {
+        margin-bottom: 0;
+      }
+    }
   }
 }
 </style>

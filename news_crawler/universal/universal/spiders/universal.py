@@ -3,8 +3,8 @@ from scrapy.spiders import CrawlSpider, Rule
 # .. 代表上级模块，这里代表上级模块下的 utils 模块
 from news_crawler.utils import get_config
 from scrapy import Item, Field
-from scrapy.loader import ItemLoader
-
+# from scrapy.loader import ItemLoader
+from news_crawler.universal.universal.loader import UniversalLoader
 
 class UniversalSpider(CrawlSpider):
     name = 'universal'
@@ -49,26 +49,26 @@ class UniversalSpider(CrawlSpider):
 
     # 对爬取网站的 url 进行预处理（http -> https）
     def process_request(self, request, response):
-        urlList = list(request.url)
-        urlList.insert(4, 's')
-        request._set_url(''.join(urlList))
+        url_list = list(request.url)
+        url_list.insert(4, 's')
+        request._set_url(''.join(url_list))
         return request
 
     def parse_detail(self, response):
-        itemDict = self.config.get('item')
-        if itemDict:
+        item_dict = self.config.get('item')
+        if item_dict:
             # 动态创建 UniversalItem 类
             UniversalItem = Item()
-            for key, value in itemDict.get('attrs').items():
+            for key, value in item_dict.get('attrs').items():
                 UniversalItem.fields[key] = Field()
-            UniversalItem.fields['collection'] = itemDict.get('collection')
+            UniversalItem.fields['collection'] = item_dict.get('collection')
 
-            # loader = eval(itemDict.get('loader'))(item=UniversalItem, response=response)
-            loader = ItemLoader(item=UniversalItem, response=response)
+            # loader = eval(item_dict.get('loader'))(item=UniversalItem, response=response)
+            loader = UniversalLoader(item=UniversalItem, response=response)
             # 动态获取属性配置
             # dict.get()：返回键对应的值，如果没有该键，使用给定的默认值
             # dict.items()：返回可遍历的(键, 值) 元组数组
-            for key, value in itemDict.get('attrs').items():
+            for key, value in item_dict.get('attrs').items():
                 for extractor in value:
                     if extractor.get('method') == 'xpath':
                         loader.add_xpath(key, xpath=extractor.get('arg'), re=extractor.get('re'))

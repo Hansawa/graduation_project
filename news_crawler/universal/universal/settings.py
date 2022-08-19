@@ -25,7 +25,7 @@ MONGO_URI = 'localhost'
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'universal.pipelines.MongoPipline': 300,
+   'universal.pipelines.MongoPipeline': 300,
 }
 
 # Enable or disable downloader middlewares

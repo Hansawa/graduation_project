@@ -1,10 +1,14 @@
 <template>
   <div class="news">
-    <el-breadcrumb separator=">">
-      <el-breadcrumb-item>爬虫管理</el-breadcrumb-item>
-      <el-breadcrumb-item>未处理新闻</el-breadcrumb-item>
-      <el-breadcrumb-item>网站：{{ props.websiteName }}</el-breadcrumb-item>
-    </el-breadcrumb>
+    <div class="header">
+      <div class="title">
+        <span>未加工新闻 |&nbsp;</span>
+        <el-breadcrumb separator=">">
+          <el-breadcrumb-item :to="{name: 'rawNewsWebsite'}">新闻网站列表</el-breadcrumb-item>
+          <el-breadcrumb-item>新闻网站：{{ $route.params.websiteName }}</el-breadcrumb-item>
+        </el-breadcrumb>
+      </div>
+    </div>
     <el-table
         :data="table.rowList"
         stripe
@@ -43,12 +47,8 @@ import {useRouter} from 'vue-router'
 import {ElMessage} from 'element-plus'
 import {get} from '/api'
 
-const props = defineProps({
-  websiteName: {
-    type: String,
-    required: true
-  }
-})
+const $router = useRouter()
+const $route = $router.currentRoute.value
 
 /* 新闻表定义 */
 let table = ref({
@@ -57,10 +57,11 @@ let table = ref({
 })
 /* 获取新闻表 */
 const getTable = async () => {
-  const websiteName = props.websiteName
+  const websiteName = $route.params.websiteName
   const resp = await get('/admin/raw_news/website/news/all', {websiteName})
   if (resp.status !== 200) return ElMessage.error(resp.msg)
   else {
+    ElMessage.success(resp.msg)
     table.value.columnList = resp.data.columnList
     table.value.rowList = resp.data.rowList
   }
@@ -73,11 +74,10 @@ const toPascal = (column) => {
 }
 
 /* 查看新闻细节 */
-const $router = useRouter()
 const handleInspect = (index, row) => {
   const params = {
-    websiteName: props.websiteName,
-    title: row['title'].join()
+    websiteName: $route.params.websiteName,
+    _id: row['_id']
   }
   $router.push({name: 'rawNewsWebsiteNewsDetail', params})
 }
@@ -86,10 +86,26 @@ const handleCurrentChange = () => {
 }
 </script>
 
-<style scoped>
-  .news {
-    height: 100%;
+<style lang="scss" scoped>
+.news {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .header {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+    .title {
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-end;
+
+      .el-breadcrumb {
+        margin-bottom: 0;
+      }
+    }
   }
+}
 </style>

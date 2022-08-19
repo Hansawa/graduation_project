@@ -1,10 +1,13 @@
 <template>
   <div class="website">
-    <el-breadcrumb separator=">">
-      <el-breadcrumb-item>爬虫管理</el-breadcrumb-item>
-      <el-breadcrumb-item>未处理新闻</el-breadcrumb-item>
-      <el-breadcrumb-item>新闻网站</el-breadcrumb-item>
-    </el-breadcrumb>
+    <div class="header">
+      <div class="title">
+        <span>未加工新闻 |&nbsp;</span>
+        <el-breadcrumb separator=">">
+          <el-breadcrumb-item>新闻网站列表</el-breadcrumb-item>
+        </el-breadcrumb>
+      </div>
+    </div>
     <el-table
         :data="table.rowList"
         stripe
@@ -53,6 +56,7 @@ const getTable = async () => {
   const resp = await get('/admin/raw_news/website/all')
   if (resp.status !== 200) return ElMessage.error(resp.msg)
   else {
+    ElMessage.success(resp.msg)
     table.value.columnList = resp.data.columnList
     table.value.rowList = resp.data.rowList
   }
@@ -71,13 +75,30 @@ const handleInspect = (index, row) => {
   $router.push({name: 'rawNewsWebsiteNews', params: {websiteName}})
 }
 
-const handleCurrentChange = () => {}
+const handleCurrentChange = () => {
+}
 </script>
 
-<style scoped>
- .website {
-   height: 100%;
-   display: flex;
-   flex-direction: column;
- }
+<style lang="scss" scoped>
+.website {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .title {
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-end;
+
+      .el-breadcrumb {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
 </style>

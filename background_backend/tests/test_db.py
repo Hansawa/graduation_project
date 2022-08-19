@@ -1,3 +1,5 @@
+import pymongo
+
 # menu = {'menuName': 'adminMenu', 'menuList': [
 #     {'id': '1', 'name': '欢迎！', 'path': 'welcome', 'icon': 'StarFilled'},
 #     {
@@ -40,20 +42,80 @@
 #     collection.update_one(configDict, {'$set': configDict}, upsert=True)
 # cli.close()
 
-websites = [
-    {'cnName': '中国新闻网', 'enName': 'chinanews', 'configName': 'chinanews'},
-    {'cnName': '华声新闻', 'enName': 'huashengnews', 'configName': 'huashengnews'},
-    {'cnName': '新京报', 'enName': 'xinjingnews', 'configName': 'xinjingnews'},
-]
+# configs = [
+#     {'configName': 'chinanews'},
+#     {'configName': 'huashengnews'},
+#     {'configName': 'xinjingnews'},
+# ]
 
-import pymongo
+config = {'configName': 'xinjingnews', 'configContent': {
+    "spider": "universal",
+    "website": "新京报",
+    "type": "新闻",
+    "index": "https://www.bjnews.com.cn/news",
+    "settings": {
+        "USER-AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36 Edg/96.0.1054.62",
+        "RANDOMIZE_DOWNLOAD_DELAY": "True",
+        "ROBOTSTXT_OBEY": "true"
+    },
+    "allowed_domains": ["www.bjnews.com.cn"],
+    "start_urls": ["https://www.bjnews.com.cn/news"],
+    "pagination_url": "https://www.bjnews.com.cn/news/{pageNum}.html",
+    "start_end": [1, 10],
+    "step": 1,
+    "rules": [
+        {
+            "link_extractor": {
+                "allow": "https://www.bjnews.com.cn/detail/\\d*.html",
+                "restrict_xpaths": "//div[@id=\"waterfall-container\"]"
+            },
+            "callback": "parse_detail"
+        }
+    ],
+    "item": {
+        "collection": "xinjingnews",
+        "attrs": {
+            "title": [
+                {
+                    "method": "xpath",
+                    "arg": "//div[@class=\"bodyTitle\"]//h1/text()"
+                }
+            ],
+            "url": [
+                {
+                    "method": "respAttr",
+                    "arg": "url"
+                }
+            ],
+            "text": [
+                {
+                    "method": "xpath",
+                    "arg": "//div[@class=\"content-name\"]"
+                }
+            ],
+            "datetime": [
+                {
+                    "method": "xpath",
+                    "arg": "//div[@class=\"content\"]//span[@class=\"timer\"]/text()"
+                }
+            ],
+            "website": [
+                {
+                    "method": "value",
+                    "arg": "新京报"
+                }
+            ]
+        }
+    }
+}}
 
 cli = pymongo.MongoClient(host='localhost')
-db = cli['raw_news']
+db = cli['crawler']
 
-collection = db['website']
-for website in websites:
-    collection.update_one({'enName': website['enName']}, {'$set': website}, upsert=True)
+collection = db['test_config']
+# collection.insert_many(configs)
+# for config in configs:
+collection.update_one({'configName': config['configName']}, {'$set': config}, upsert=True)
 
 documents = collection.find()
 for document in documents:
