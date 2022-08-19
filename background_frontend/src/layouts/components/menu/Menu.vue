@@ -17,7 +17,7 @@
 <script setup>
 import MenuItem from '/layouts/components/menu/MenuItem.vue'
 import {onBeforeMount, reactive, ref} from 'vue'
-import {useRouter} from 'vue-router'
+import {useRoute} from 'vue-router'
 import {get} from '/api'
 import {ElMessage} from 'element-plus'
 
@@ -36,9 +36,12 @@ onBeforeMount(async () => {
   menuList.value = resp.data.menuList
 })
 
-const router = useRouter()
+/* 默认激活菜单项 */
+const $route = useRoute()
 let activePath = ref('')
-onBeforeMount(() => activePath.value = router.currentRoute.value.path)
+onBeforeMount(() => {
+  activePath.value = $route.path
+})
 
 const handleOpen = (key, keyPath) => {
 }

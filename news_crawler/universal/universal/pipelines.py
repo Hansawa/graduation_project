@@ -10,11 +10,13 @@ import pymongo
 
 
 # 我们可以自己定义 pipeline，而且必须实现 process_item() 方法，最后要在 settings.py 中注册该 pipeline
-class MongoPipline():
+class MongoPipeline:
     # 初始化方法（相当于构造方法）
     def __init__(self, mongo_uri, mongo_db):
         self.mongo_uri = mongo_uri
         self.mongo_db = mongo_db
+        self.client = None
+        self.db = None
 
     """
         方法类别: 类方法

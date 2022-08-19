@@ -1,0 +1,61 @@
+{
+    "spider": "universal",
+    "website": "华声新闻",
+    "type": "新闻",
+    "index": "http://news.voc.com.cn/",
+    "settings": {
+      "USER-AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36 Edg/96.0.1054.62",
+      "DOWNLOAD_DELAY": 0,
+      "RANDOMIZE_DOWNLOAD_DELAY": "True",
+      "ROBOTSTXT_OBEY": "true"
+    },
+    "allowed_domains": ["news.voc.com.cn"],
+    "start_urls": ["http://news.voc.com.cn/class/2199.html"],
+    "pagination_url": "http://news.voc.com.cn/class/2199_{pageNum}.html",
+    "start_end": [1, 2],
+    "step": 1,
+    "rules": [
+      {
+        "link_extractor": {
+          "allow": "article/.*\\.html",
+          "restrict_xpaths": "//div[@class=\"cont\"]"
+        },
+        "callback": "parse_detail"
+      }
+    ],
+    "item": {
+        "collection": "huashengnews",
+        "attrs": {
+          "title": [
+            {
+              "method": "xpath",
+              "arg": "//h1/text()"
+            }
+          ],
+          "url": [
+            {
+              "method": "respAttr",
+              "arg": "url"
+            }
+          ],
+          "text": [
+            {
+              "method": "xpath",
+              "arg": "//div[@id='content']"
+            }
+          ],
+          "datetime": [
+            {
+              "method": "xpath",
+              "arg": "//div[@class='font_time']/div[1]/text()"
+            }
+          ],
+          "website": [
+            {
+              "method": "value",
+              "arg": "华声新闻"
+            }
+          ]
+        }
+    }
+}

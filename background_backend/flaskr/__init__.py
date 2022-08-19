@@ -13,7 +13,8 @@ def create_app(test_config=None):
         SECRET_KEY='dev1',
         SQLITE_DB=os.path.join(app.instance_path, 'flaskr.sqlite'),
         MONGODB_URI='localhost',
-        CRAWLER_CONFIGS_DIR=os.path.join(flaskrPath, 'crawler_configs')
+        CRAWLER_CONFIGS_DIR=os.path.join(flaskrPath, 'crawler_configs'),
+        CRAWLER_TEST_CONFIGS_DIR=os.path.join(flaskrPath, 'crawler_configs', 'test')
     )
 
     if test_config is None:
@@ -26,6 +27,7 @@ def create_app(test_config=None):
     # ensure the instance folder exists
     pathlib.Path(app.instance_path).mkdir(parents=True, exist_ok=True)
     pathlib.Path(app.config['CRAWLER_CONFIGS_DIR']).mkdir(parents=True, exist_ok=True)
+    pathlib.Path(app.config['CRAWLER_TEST_CONFIGS_DIR']).mkdir(parents=True, exist_ok=True)
 
     # a simple page that says hello
     @app.route('/hello')
@@ -48,5 +50,12 @@ def create_app(test_config=None):
 
     from .blueprints.admin import raw_news
     app.register_blueprint(raw_news.bp)
+
+    # 跨域支持
+    def after_request(resp):
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
+
+    app.after_request(after_request)
 
     return app
