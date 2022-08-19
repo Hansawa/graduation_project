@@ -3,7 +3,7 @@ from itemloaders.processors import TakeFirst, Compose, Join
 
 
 class UniversalLoader(ItemLoader):
-    default_output_processor = Compose(TakeFirst(), Join(), str.strip)
+    default_output_processor = Compose(TakeFirst(), str.strip)
 #
 #
 # class ChinaVoiceLoader(NewsLoader):

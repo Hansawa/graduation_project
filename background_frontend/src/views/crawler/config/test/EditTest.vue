@@ -14,7 +14,7 @@
         <el-scrollbar>
           <el-form :model="form" label-position="top">
             <el-form-item label="配置名称">
-              <el-input v-model="form.configName" />
+              <el-input v-model="form.configName"/>
             </el-form-item>
             <el-form-item label="配置内容">
               <el-input
@@ -47,13 +47,14 @@ const $route = $router.currentRoute.value
 
 /* 配置内容定义 */
 let form = ref({
+  configId: '',
   configName: '',
   configContent: ''
 })
 /* 获取配置内容 */
 const getConfigContent = async () => {
-  const configName = $route.params.configName
-  const resp = await get('/admin/crawler/config/test/content', {configName})
+  const _id = $route.params._id
+  const resp = await get('/admin/crawler/config/test/content', {_id})
   if (resp.status !== 200) {
     ElMessage.error(resp.msg)
     await $router.push({name: 'crawlerTestConfig'})
@@ -69,18 +70,17 @@ onBeforeMount(async () => {
 
 /* 保存测试配置 */
 const save = async () => {
-  const data = {
-    configName: form.value.configName,
-    configContent: form.value.configContent
-  }
+  const data = form.value
   const resp = await post('/admin/crawler/config/test/content', data)
   if (resp.status !== 200) return ElMessage.error(resp.msg)
   else ElMessage.success(resp.msg)
 }
 
 /* 运行测试配置 */
-const run = () => {
-
+const run = async () => {
+  const configId = form.value.configId
+  const resp = await get('/admin/crawler/config/test/run', {configId})
+  console.log(resp)
 }
 </script>
 

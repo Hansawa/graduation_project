@@ -123,10 +123,9 @@ const toPascal = (column) => {
 
 /* 下载配置文件 */
 const handleDownload = async (index, row) => {
-  const configName = row['configName']
-  const resp = await downloadFile('/admin/crawler/config/test', {configName})
-
-  if (resp == null) return ElMessage.error('fail to download config file')
+  const _id = row['_id']
+  const resp = await downloadFile('/admin/crawler/config/test', {_id})
+  if (resp == null) return ElMessage.error('Fail to download this config')
   else {
     // 用从后端传来的原始二进制数据构造 blob
     const blob = new Blob([resp], {type: 'application/json'})
@@ -139,7 +138,7 @@ const handleDownload = async (index, row) => {
     URL.revokeObjectURL(link.href)  // 释放 blob 对象
     document.body.removeChild(link)
 
-    ElMessage.success('download config file successful')
+    ElMessage.success('Download this config successful')
   }
 }
 
@@ -166,8 +165,8 @@ const uploadConfig = async (option) => {
 
 /* 编辑与测试 */
 const handleEditTest = (index, row) => {
-  const configName = row['_id']
-  $router.push({name: 'crawlerEditTest', params: {configName}})
+  const _id = row['_id']
+  $router.push({name: 'crawlerEditTest', params: {_id}})
 }
 
 const handleCurrentChange = (currentRow, oldCurrentRow) => {

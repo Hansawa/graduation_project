@@ -1,18 +1,16 @@
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
-# .. 代表上级模块，这里代表上级模块下的 utils 模块
-from news_crawler.utils import get_config
 from scrapy import Item, Field
-# from scrapy.loader import ItemLoader
 from news_crawler.universal.universal.loader import UniversalLoader
+
 
 class UniversalSpider(CrawlSpider):
     name = 'universal'
 
     # 在实例化 spider 时初始化它的 rules，start_urls，allowed_domains，从配置文件中读取值
-    def __init__(self, name, *args, **kwargs):
+    def __init__(self, config_content, *args, **kwargs):
         # 获取爬虫配置
-        config = get_config(name)
+        config = config_content
         self.config = config
 
         # 设置允许爬取的域名，不在该范围内的连接将会被忽略
@@ -24,7 +22,8 @@ class UniversalSpider(CrawlSpider):
         step = config.get("step")
         pagination_url = config.get("pagination_url")
         urls = config.get("start_urls")
-        urls += [eval("f'"+pagination_url+"'") for pageNum in range(start_end[0] + step, start_end[1] + step) if start_end[1] != 1]
+        urls += [eval("f'" + pagination_url + "'") for pageNum in range(start_end[0] + step, start_end[1] + step) if
+                 start_end[1] != 1]
         self.start_urls = urls
 
         # 此为直接从 rules 模块获取对应的抓取逻辑
