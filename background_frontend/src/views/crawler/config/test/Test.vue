@@ -22,7 +22,6 @@
         border
         style="width: 100%"
         highlight-current-row
-        @current-change="handleCurrentChange"
     >
       <template v-for="column in table.columnList">
         <el-table-column :prop="column" :label="toPascal(column)"/>
@@ -167,10 +166,6 @@ const uploadConfig = async (option) => {
 const handleEditTest = (index, row) => {
   const _id = row['_id']
   $router.push({name: 'crawlerEditTest', params: {_id}})
-}
-
-const handleCurrentChange = (currentRow, oldCurrentRow) => {
-
 }
 </script>
 

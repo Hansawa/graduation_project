@@ -1,7 +1,11 @@
+from scrapy.loader import ItemLoader
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy import Item, Field
-from news_crawler.universal.universal.loader import UniversalLoader
+from itemloaders.processors import TakeFirst, Compose, Join
+import re
+
+from news_crawler.universal.universal.loader import ChinaVoiceLoader
 
 
 class UniversalSpider(CrawlSpider):
@@ -43,6 +47,47 @@ class UniversalSpider(CrawlSpider):
             rules.append(rule)
         self.rules = rules
 
+        # 动态创建 UniversalItem 类
+        UniversalItem = Item()
+        for key, value in attrs.items():
+            UniversalItem.fields[key] = Field()
+        UniversalItem.fields['collection'] = item_dict.get('collection')
+
+        # 动态生成 loader 类
+        # default_processor
+        cls_attrs = {}
+        for key, processors in item_dict.get('default_processor').items():
+            string = ''
+
+            for processor in processors:
+                # 检查安全
+                if 'import' in processor.lower() or 'module' in processor.lower():
+                    raise ValueError
+                string = string + f'{processor},'
+            # 去掉末尾“，”
+            string = string[0: len(string) - 1]
+
+            # 设置 loader 的 default_processor，in or out
+            cls_attrs[f'default_{key}put_processor'] = eval(f'Compose({string})')
+
+        # item processor： item_name：属性名，value：属性对应的处理程序，key：in out，processors：处理器
+        for item_name, value in attrs.items():
+            for key, processors in value.get('processor').items():
+                string = ''
+
+                for processor in processors:
+                    # 检查安全
+                    if 'import' in processor.lower() or 'module' in processor.lower():
+                        raise ValueError
+                    string = string + f'{processor},'
+                string = string[0: len(string) - 1]
+
+                cls_attrs[f'{item_name}_{key}'] = eval(f'Compose({string})')
+
+        universal_loader = type('UniversalLoader', (ItemLoader, ), cls_attrs)
+        loader = universal_loader(item=UniversalItem, response=response)
+        # loader = ChinaVoiceLoader(item=UniversalItem, response=response)
+
         # 相当于 super(UniversalSpider, self).__init__(*args, **kwargs)
         super().__init__(*args, **kwargs)
 
@@ -56,19 +101,14 @@ class UniversalSpider(CrawlSpider):
     def parse_detail(self, response):
         item_dict = self.config.get('item')
         if item_dict:
-            # 动态创建 UniversalItem 类
-            UniversalItem = Item()
-            for key, value in item_dict.get('attrs').items():
-                UniversalItem.fields[key] = Field()
-            UniversalItem.fields['collection'] = item_dict.get('collection')
+            # 获取属性信息
+            attrs = item_dict.get('attrs')
 
-            # loader = eval(item_dict.get('loader'))(item=UniversalItem, response=response)
-            loader = UniversalLoader(item=UniversalItem, response=response)
-            # 动态获取属性配置
+
             # dict.get()：返回键对应的值，如果没有该键，使用给定的默认值
             # dict.items()：返回可遍历的(键, 值) 元组数组
-            for key, value in item_dict.get('attrs').items():
-                for extractor in value:
+            for key, value in attrs.items():
+                for extractor in value.get('extractors'):
                     if extractor.get('method') == 'xpath':
                         loader.add_xpath(key, xpath=extractor.get('arg'), re=extractor.get('re'))
                     if extractor.get('method') == 'css':

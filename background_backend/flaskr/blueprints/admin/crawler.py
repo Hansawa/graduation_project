@@ -4,10 +4,12 @@ import ast
 
 from bson import ObjectId
 from flask import Blueprint, current_app, request, send_file, Response
+from flask_socketio import emit
 from werkzeug.utils import secure_filename
 from background_backend.flaskr.DBHelper import mongodb
 from background_backend.flaskr.utils import respBody
 import requests
+
 
 # from concurrent.futures import ThreadPoolExecutor
 # executor = ThreadPoolExecutor(3)
@@ -155,7 +157,9 @@ def run_crawler_test_config():
     cli = mongodb.get_cli()
     result = cli['crawler'].get_collection('test_config').find_one({'_id': _id}, {'_id': 0})
 
-    if result is None:
+    drop_result = cli['test_news'].drop_collection(result['configName'])
+
+    if result and drop_result is None:
         respBody['status'] = 401
         respBody['msg'] = 'Fail to run test config'
         return respBody

@@ -69,12 +69,17 @@ const routes = [
                                         }
                                     },
                                     {
-                                        path: ':_id',
+                                        path: 'edit_test/:_id',
                                         name: 'crawlerEditTest',
                                         component: () => import('/views/crawler/config/test/EditTest.vue'),
                                         meta: {
                                             title: '编辑与测试'
                                         }
+                                    },
+                                    {
+                                        path: 'wash/:configName',
+                                        name: 'crawlerWash',
+                                        component: () => import('/views/crawler/config/test/Wash.vue')
                                     }
                                 ]
                             },

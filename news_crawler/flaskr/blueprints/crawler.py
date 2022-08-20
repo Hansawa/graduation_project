@@ -24,11 +24,17 @@ def run_crawler_test_config():
         old_path = os.getcwd()
         new_path = os.path.dirname(spiders.__file__)
         os.chdir(new_path)
-        p = Process(target=run, args=('test', config_name, config_content, ))
-        p.start()
-        p.join()
-        os.chdir(old_path)
+        try:
+            p = Process(target=run, args=('test', config_name, config_content, ))
+            p.start()
+            p.join()
+        except Exception:
+            os.chdir(old_path)
+            respBody['status'] = 401
+            respBody['msg'] = f'Fail crawl {config_name} news'
+            return
 
+        os.chdir(old_path)
         respBody['status'] = 200
         respBody['msg'] = f'crawl {config_name} news successful'
         return respBody

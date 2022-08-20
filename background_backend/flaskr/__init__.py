@@ -4,17 +4,18 @@ import pathlib
 from flask import Flask
 
 
+# 工厂函数
 def create_app(test_config=None):
     # flask 实例名
-    flaskrPath = os.path.join(os.getcwd(), __name__.split('.')[1])
+    flaskr_path = os.path.join(os.getcwd(), __name__.split('.')[1])
     # create and configure the app, 添加了 instance_relative_config 为 True 后配置文件存放在 instance 目录里
-    app = Flask(__name__, instance_relative_config=True, instance_path=os.path.join(flaskrPath, 'instance'))
+    app = Flask(__name__, instance_relative_config=True, instance_path=os.path.join(flaskr_path, 'instance'))
     app.config.from_mapping(
         SECRET_KEY='dev1',
         SQLITE_DB=os.path.join(app.instance_path, 'flaskr.sqlite'),
         MONGODB_URI='localhost',
-        CRAWLER_CONFIGS_DIR=os.path.join(flaskrPath, 'crawler_configs'),
-        CRAWLER_TEST_CONFIGS_DIR=os.path.join(flaskrPath, 'crawler_configs', 'test')
+        CRAWLER_CONFIGS_DIR=os.path.join(flaskr_path, 'crawler_configs'),
+        CRAWLER_TEST_CONFIGS_DIR=os.path.join(flaskr_path, 'crawler_configs', 'test')
     )
 
     if test_config is None:
@@ -51,11 +52,13 @@ def create_app(test_config=None):
     from .blueprints.admin import raw_news
     app.register_blueprint(raw_news.bp)
 
+    from .blueprints.admin import test_news
+    app.register_blueprint(test_news.bp)
+
     # 跨域支持
     def after_request(resp):
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
-
     app.after_request(after_request)
 
     return app

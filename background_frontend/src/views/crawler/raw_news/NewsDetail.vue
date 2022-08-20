@@ -14,31 +14,29 @@
       </div>
     </div>
     <div class="main">
-      <el-scrollbar>
-        <el-table
-            :data="table"
-            stripe
-            border
-            style="width: 100%"
-            highlight-current-row
-            @current-change="handleCurrentChange"
-        >
-          <template v-for="column in columnList">
-            <el-table-column show-overflow-tooltip :prop="column" :label="toPascal(column)"/>
+      <el-table
+          :data="table"
+          stripe
+          border
+          style="width: 100%"
+          highlight-current-row
+          @current-change="handleCurrentChange"
+      >
+        <template v-for="column in columnList">
+          <el-table-column show-overflow-tooltip :prop="column" :label="toPascal(column)"/>
+        </template>
+        <el-table-column label="Operations">
+          <template #default="scope">
+            <el-button
+                type="primary"
+                size="small"
+                @click="handleWash(scope.$index, scope.row)"
+            >
+              清洗
+            </el-button>
           </template>
-          <el-table-column label="Operations">
-            <template #default="scope">
-              <el-button
-                  type="primary"
-                  size="small"
-                  @click="handleWash(scope.$index, scope.row)"
-              >
-                清洗
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-scrollbar>
+        </el-table-column>
+      </el-table>
     </div>
   </div>
   <!-- 清洗对话框  -->
@@ -110,8 +108,7 @@ let dialogTitle = ref('')
 let dialogContent = ref('')
 let dialogVisible = ref(false)
 const handleWash = (index, row) => {
-  dialogVisible = true
-  console.log(row['itemName'])
+  dialogVisible.value = true
   dialogTitle.value = row['itemName']
   dialogContent.value = row['itemContent']
 }

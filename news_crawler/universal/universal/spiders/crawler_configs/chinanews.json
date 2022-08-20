@@ -1,0 +1,102 @@
+{
+  "spider": "universal",
+  "website": "中国新闻网",
+  "type": "新闻",
+  "index": "http://www.chinanews.com.cn/",
+  "settings": {
+    "USER-AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36 Edg/96.0.1054.62",
+    "DOWNLOAD_DELAY": 0,
+    "RANDOMIZE_DOWNLOAD_DELAY": "True",
+    "ROBOTSTXT_OBEY": "true"
+  },
+  "allowed_domains": [
+    "www.chinanews.com.cn"
+  ],
+  "start_urls": [
+    "http://www.chinanews.com.cn/scroll-news/news1.html"
+  ],
+  "pagination_url": "http://www.chinanews.com.cn/scroll-news/news{pageNum}.html",
+  "start_end": [
+    1,
+    2
+  ],
+  "step": 1,
+  "rules": [
+    {
+      "link_extractor": {
+        "allow": "/\\w{2}/\\d{4}/\\d{2}-\\d{2}/.*\\.shtml",
+        "restrict_xpaths": "//div[@class=\"content_list\"]/ul"
+      },
+      "callback": "parse_detail"
+    }
+  ],
+  "item": {
+    "collection": "chinanews",
+    "default_processor": {
+      "in": [],
+      "out": []
+    },
+    "attrs": {
+      "title": {
+        "processor": {
+          "in": [],
+          "out": []
+        },
+        "extractors": [
+          {
+            "method": "xpath",
+            "arg": "//div[@class=\"content_maincontent_more\"]//h1/text()"
+          }
+        ]
+      },
+      "url": {
+        "processor": {
+          "in": [],
+          "out": []
+        },
+        "extractors": [
+          {
+            "method": "respAttr",
+            "arg": "url"
+          }
+        ]
+      },
+      "text": {
+        "processor": {
+          "in": [],
+          "out": []
+        },
+        "extractors": [
+          {
+            "method": "xpath",
+            "arg": "//div[@class=\"content_maincontent_content\"]"
+          }
+        ]
+      },
+      "datetime": {
+        "processor": {
+          "in": [],
+          "out": []
+        },
+        "extractors": [
+          {
+            "method": "xpath",
+            "arg": "//div[@class=\"content_left_time\"]/text()"
+          }
+        ]
+      },
+      "website": {
+        "processor": {
+          "in": [],
+          "out": []
+        },
+        "extractors": [
+          {
+            "method": "value",
+            "arg": "中国新闻网"
+          }
+        ]
+      }
+    }
+  }
+}
