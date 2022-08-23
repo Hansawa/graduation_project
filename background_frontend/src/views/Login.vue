@@ -1,6 +1,6 @@
 <template>
   <div class="login_container">
-    <p id="title">新闻聚合后台系统</p>
+    <p id="title">新闻聚合系统</p>
     <div class="login_box">
       <!--   头像区域   -->
       <div class="avatar_box">
@@ -86,15 +86,13 @@ const onSubmit = async (formEl) => {
 
     /* 查询登录信息是否正确 */
     let resp = await post('/admin/login', form)
-    if (resp.status !== 200) return ElMessage.error(resp.msg)
 
     /* 允许自动登录，则在当地存储保存用户 id，下次直接用 id 获取用户资料 */
     if (form.rememberMe) window.localStorage.setItem('adminId', resp.data.adminId)
     else window.localStorage.clear()
     window.sessionStorage.setItem('adminId', resp.data.adminId)
 
-    /* 显示成功登录 Message */
-    ElMessage.success(resp.msg)
+    /* 成功登录 */
     await router.push(resp.data.routePath)
   })
 }

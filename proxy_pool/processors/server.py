@@ -46,7 +46,7 @@ def get_random_proxy():
 
     :return:
     """
-    return f'<h2>Get random proxy</h2><br />{redis_client.get_random()}'
+    return redis_client.get_random()
 
 
 @app.route('/get/all')

@@ -14,7 +14,7 @@ class Ip3366Crawler(BaseCrawler):
 
     """
     urls = [BASE_URL.format(page=page) for page in range(1, 6)]
-    ignore = True
+    ignore = False
 
     def _parse(self, html) -> Generator:
         """extract the host and port of Proxy from html text

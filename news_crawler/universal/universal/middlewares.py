@@ -82,7 +82,7 @@ class ScrapyUniversalDownloaderMiddleware:
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.
-        print("="*50, response.url)
+        print("=" * 50, response.url)
         # Must either:
         # - return a Response object
         # - return a Request object
@@ -101,3 +101,20 @@ class ScrapyUniversalDownloaderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+
+# import aiohttp
+import logging
+import requests
+
+
+# 代理池对接中间件
+class ProxyMiddleware(object):
+    proxypool_url = 'http://localhost:5000/get/random'
+    logger = logging.getLogger('middlewares.proxy')
+
+    def process_request(self, request, spider):
+        resp = requests.get(self.proxypool_url)
+        proxy = resp.text
+        self.logger.debug(f'set proxy {proxy}')
+        request.meta['proxy'] = f'http://{proxy}'

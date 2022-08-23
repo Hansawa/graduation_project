@@ -12,9 +12,10 @@ import pymongo
 # 我们可以自己定义 pipeline，而且必须实现 process_item() 方法，最后要在 settings.py 中注册该 pipeline
 class MongoPipeline:
     # 初始化方法（相当于构造方法）
-    def __init__(self, mongo_uri, mongo_db):
+    def __init__(self, mongo_uri, mongo_db, collection):
         self.mongo_uri = mongo_uri
         self.mongo_db = mongo_db
+        self.collection = collection
         self.client = None
         self.db = None
 
@@ -30,7 +31,8 @@ class MongoPipeline:
     def from_crawler(cls, crawler):
         return cls(
             mongo_uri=crawler.settings.get('MONGO_URI'),
-            mongo_db=crawler.settings.get('MONGO_DB')
+            mongo_db=crawler.settings.get('MONGO_DB'),
+            collection=crawler.settings.get('COLLECTION')
         )
 
     # 当爬虫打开后，连接 mongodb
@@ -45,7 +47,8 @@ class MongoPipeline:
         # 获取 collection 并插入数据
         # pymongo 4.0 之后的版本中剔除了 Collection.insert() 方法，改成了 insert_one(字典) 与 insert_many(字典列表)
         # 使用 update_one 避免插入重复数据，此处接受三个参数，filter: 要更改的元素，update: 更改后的元素的值，upsert: 启用更新与插入功能
-        self.db[item.fields.get('collection')].update_one(item, {'$set': item}, upsert=True)
+        # item['title'] = item.fields.get('title')
+        self.db[self.collection].update_one({'title': item['title']}, {'$set': item}, upsert=True)
         return item
 
     # 当爬虫关闭后，关闭 mongodb

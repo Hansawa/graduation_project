@@ -7,6 +7,7 @@
           <el-breadcrumb-item>{{ $router.currentRoute.value.meta.title }}</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
+    <div>
       <el-button
           type="primary"
           size="small"
@@ -15,6 +16,15 @@
       >
         上传文件
       </el-button>
+      <el-button
+          type="primary"
+          size="small"
+          auto-insert-space
+          @click="downloadTemplate"
+      >
+        下载模板
+      </el-button>
+    </div>
     </div>
     <el-table
         :data="table.rowList"
@@ -22,7 +32,10 @@
         border
         style="width: 100%"
         highlight-current-row
+        @row-dblclick="handleDblClick"
+        table-layout="auto"
     >
+      <el-table-column type="index"/>
       <template v-for="column in table.columnList">
         <el-table-column :prop="column" :label="toPascal(column)"/>
       </template>
@@ -49,6 +62,13 @@
           >
             删除
           </el-button>
+          <el-button
+              size="small"
+              type="success"
+              @click="handleSubmit(scope.$index, scope.row)"
+          >
+            提交
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -70,6 +90,7 @@
         :auto-upload="false"
         accept=".json"
         :http-request="uploadConfig"
+        :on-change="handleChange"
     >
       <el-icon class="el-icon--upload">
         <upload-filled/>
@@ -92,7 +113,7 @@
 
 <script setup>
 import {ref, onBeforeMount} from 'vue'
-import {get, downloadFile, uploadFile} from '/api'
+import {get, post, downloadFile, uploadFile} from '/api'
 import {ElMessage, ElNotification} from 'element-plus'
 import {useRouter} from 'vue-router'
 
@@ -106,12 +127,13 @@ let table = ref({
 /* 获取配置文件表 */
 const getTable = async () => {
   const resp = await get('/admin/crawler/config/test/all')
-  if (resp.status !== 200) return ElMessage.error(resp.msg)
-  else {
-    ElMessage.success(resp.msg)
-    table.value.columnList = resp.data.columnList
-    table.value.rowList = resp.data.rowList
+  if (resp === undefined) {
+    table.value.columnList = null
+    table.value.rowList = null
+    return
   }
+  table.value.columnList = resp.data.columnList
+  table.value.rowList = resp.data.rowList
 }
 onBeforeMount(getTable)
 /* table-column 元素的 label 属性的值设置为Pascal命名 */
@@ -123,28 +145,26 @@ const toPascal = (column) => {
 /* 下载配置文件 */
 const handleDownload = async (index, row) => {
   const _id = row['_id']
-  const resp = await downloadFile('/admin/crawler/config/test', {_id})
-  if (resp == null) return ElMessage.error('Fail to download this config')
-  else {
-    // 用从后端传来的原始二进制数据构造 blob
-    const blob = new Blob([resp], {type: 'application/json'})
-    const link = document.createElement('a')
-    link.download = row['configName'] // a标签添加属性
-    link.style.display = 'none'
-    link.href = URL.createObjectURL(blob)
-    document.body.appendChild(link)
-    link.click() // 执行下载
-    URL.revokeObjectURL(link.href)  // 释放 blob 对象
-    document.body.removeChild(link)
+  const resp = await downloadFile('/admin/crawler/config/test/download', {_id})
+  if (resp === undefined) return
+  // 用从后端传来的原始二进制数据构造 blob
+  const blob = new Blob([resp.data], {type: 'application/json'})
+  const link = document.createElement('a')
+  link.download = row['configName'] // a标签添加属性
+  link.style.display = 'none'
+  link.href = URL.createObjectURL(blob)
+  document.body.appendChild(link)
+  link.click() // 执行下载
+  URL.revokeObjectURL(link.href)  // 释放 blob 对象
+  document.body.removeChild(link)
 
-    ElMessage.success('Download this config successful')
-  }
+  ElMessage.success('Save this config successful')
 }
 
 /* 对话框 */
 let dialogVisible = ref(false)
-const handleClose = (done) => {
-  getTable()
+const handleClose = async (done) => {
+  await getTable()
   done()
 }
 
@@ -157,15 +177,58 @@ const submitUpload = () => {
 }
 /* 自定义上传请求 */
 const uploadConfig = async (option) => {
-  const resp = await uploadFile('/admin/crawler/config/test', option.file)
-  if (resp.status !== 200) return ElNotification.error({message: resp.msg})
-  else ElNotification.success({message: resp.msg})
+  const resp = await uploadFile('/admin/crawler/config/test/upload', option.file)
 }
 
 /* 编辑与测试 */
 const handleEditTest = (index, row) => {
   const _id = row['_id']
   $router.push({name: 'crawlerEditTest', params: {_id}})
+}
+const handleDblClick = (row, column, event) => {
+  const index = 0
+  handleEditTest(index, row)
+}
+
+/* 下载模板 */
+const downloadTemplate = async () => {
+  const resp = await downloadFile('/admin/crawler/config/test/download', {'_id': '62ff74c0a85533fa5bcfc976'})
+  if (resp === undefined) return
+  // 用从后端传来的原始二进制数据构造 blob
+  const blob = new Blob([resp.data], {type: 'application/json'})
+  const link = document.createElement('a')
+  link.download = 'universal' // a标签添加属性
+  link.style.display = 'none'
+  link.href = URL.createObjectURL(blob)
+  document.body.appendChild(link)
+  link.click() // 执行下载
+  URL.revokeObjectURL(link.href)  // 释放 blob 对象
+  document.body.removeChild(link)
+
+  ElMessage.success('Save config template successful')
+}
+
+/* 删除某配置 */
+const handleDelete = async (index, row) => {
+  const _id = row['_id']
+  const resp = get('/admin/crawler/config/test/delete', {_id})
+  await getTable()
+}
+
+/* 禁止上传文件名称为 universal 的文件 */
+const handleChange = (UploadFile, UploadFiles) => {
+  if (UploadFile.name === 'universal.json') {
+    uploadRef.value.handleRemove(UploadFile)
+    ElMessage.error('Can not upload file named universal.json')
+  }
+}
+
+/* 提交 */
+const handleSubmit =async (index, row) => {
+  if (row['websiteCnName'] === '' || row['websiteEnName'] === '')
+    return ElMessage.warning('Website name can not null!')
+  const config = row
+  const resp = await post('/admin/crawler/config/test/submit', config)
 }
 </script>
 

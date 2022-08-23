@@ -1,22 +1,15 @@
 from twisted.internet import reactor, defer
 from scrapy.utils.project import get_project_settings
-from news_crawler.utils import get_config
+# from news_crawler.utils import get_config
 from scrapy.crawler import CrawlerRunner, CrawlerProcess
 
 
-def run(env, config_name, config_content):
+def run(env, config_contents):
     try:
         if env == 'dev':
-            website_name = 'chinanews'
-            spider_name = 'universal'
-            config = get_config(website_name)
-            project_settings = get_project_settings()
-            project_settings.update(config.get('settings'))
-            process = CrawlerProcess(project_settings)
-            process.crawl(spider_name, name=website_name)
-            process.start()
             pass
         elif env == 'test':
+            config_content = config_contents
             spider_name = config_content['spider']
             project_settings = get_project_settings()
             project_settings.update(config_content['settings'])
@@ -25,128 +18,19 @@ def run(env, config_name, config_content):
             process.start()
             pass
         elif env == 'serve':
-            spider_name_list = ['huashengnews', 'chinanews', 'xinjingnews']
-            project_settings = get_project_settings()
-            runner_spidername = {}
-            for spiderName in spider_name_list:
-                config = get_config(spiderName)
-                project_settings.update(config.get('settings'))
+            runner_config = {}
+            for config_content in config_contents:
+                project_settings = get_project_settings()
+                project_settings.update(config_content.get('settings'))
                 runner = CrawlerRunner(project_settings)
-                runner_spidername[runner] = spiderName
+                runner_config[runner] = config_content
             @defer.inlineCallbacks
             def crawl():
-                for runner, spider_name in runner_spidername.items():
-                    yield runner.crawl('universal', name=spider_name)
+                for runner, config_content in runner_config.items():
+                    yield runner.crawl('universal', config_content=config_content)
                 reactor.stop()
             crawl()
             reactor.run()
             pass
     except ValueError:
         print('error')
-
-
-if __name__ == '__main__':
-    run('test', config_name='chinanews', config_content={
-        "spider": "universal",
-        "website": "中国新闻网",
-        "type": "新闻",
-        "index": "http://www.chinanews.com.cn/",
-        "settings": {
-            "USER-AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36 Edg/96.0.1054.62",
-            "DOWNLOAD_DELAY": 0,
-            "RANDOMIZE_DOWNLOAD_DELAY": "True",
-            "ROBOTSTXT_OBEY": "true",
-            "MONGO_URI": "localhost",
-            "MONGO_DB": "test_news"
-        },
-        "allowed_domains": [
-            "www.chinanews.com.cn"
-        ],
-        "start_urls": [
-            "http://www.chinanews.com.cn/scroll-news/news1.html"
-        ],
-        "pagination_url": "http://www.chinanews.com.cn/scroll-news/news{pageNum}.html",
-        "start_end": [
-            1,
-            2
-        ],
-        "step": 1,
-        "rules": [
-            {
-                "link_extractor": {
-                    "allow": "/\\w{2}/\\d{4}/\\d{2}-\\d{2}/.*\\.shtml",
-                    "restrict_xpaths": "//div[@class=\"content_list\"]/ul"
-                },
-                "callback": "parse_detail"
-            }
-        ],
-        "item": {
-            "collection": "chinanews",
-            "default_processor": {
-                "in": [],
-                "out": []
-            },
-            "attrs": {
-                "title": {
-                    "processor": {
-                        "in": [],
-                        "out": []
-                    },
-                    "extractors": [
-                        {
-                            "method": "xpath",
-                            "arg": "//div[@class=\"content_maincontent_more\"]//h1/text()"
-                        }
-                    ]
-                },
-                "url": {
-                    "processor": {
-                        "in": [],
-                        "out": []
-                    },
-                    "extractors": [
-                        {
-                            "method": "respAttr",
-                            "arg": "url"
-                        }
-                    ]
-                },
-                "text": {
-                    "processor": {
-                        "in": [],
-                        "out": []
-                    },
-                    "extractors": [
-                        {
-                            "method": "xpath",
-                            "arg": "//div[@class=\"content_maincontent_content\"]"
-                        }
-                    ]
-                },
-                "datetime": {
-                    "processor": {
-                        "in": [],
-                        "out": []
-                    },
-                    "extractors": [
-                        {
-                            "method": "xpath",
-                            "arg": "//div[@class=\"content_left_time\"]/text()"
-                        }
-                    ]
-                },
-                "website": {
-                    "processor": {
-                        "in": [],
-                        "out": []
-                    },
-                    "extractors": [
-                        {
-                            "method": "value",
-                            "arg": "中国新闻网"
-                        }
-                    ]
-                }
-            }
-        }
-    })

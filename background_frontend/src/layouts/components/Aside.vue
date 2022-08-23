@@ -16,7 +16,7 @@ import Menu from '/layouts/components/menu/Menu.vue'
 import {onBeforeMount, ref} from 'vue'
 
 /* 菜单栏折叠所需 */
-let isCollapse = ref(true)
+let isCollapse = ref(false)
 let menuWidth = ref('')
 let iconDeg = ref('')
 let logoBoxJustifyContent = ref('')

@@ -12,6 +12,8 @@ BOT_NAME = 'universal'
 SPIDER_MODULES = ['universal.spiders']
 NEWSPIDER_MODULE = 'universal.spiders'
 
+# 开启 scrapy 对 asyncio 的支持
+# TWISTED_REACTOR = 'twisted.internet.asyncioreactor.AsyncioSelectorReactor'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'scrapy_universal (+http://www.yourdomain.com)'
@@ -31,6 +33,7 @@ ITEM_PIPELINES = {
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
    'universal.middlewares.ScrapyUniversalDownloaderMiddleware': 543,
+   # 'universal.middlewares.ProxyMiddleware': 544
 }
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)

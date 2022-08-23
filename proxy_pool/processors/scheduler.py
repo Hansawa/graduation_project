@@ -26,7 +26,7 @@ class Scheduler:
             getter.run()
             loop += 1
             print(f'getter loop: {loop}')
-            time.sleep(60 * 60)
+            time.sleep(30)
 
     @staticmethod
     def _tester_loop():

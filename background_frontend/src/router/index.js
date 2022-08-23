@@ -75,58 +75,32 @@ const routes = [
                                         meta: {
                                             title: '编辑与测试'
                                         }
-                                    },
-                                    {
-                                        path: 'wash/:configName',
-                                        name: 'crawlerWash',
-                                        component: () => import('/views/crawler/config/test/Wash.vue')
                                     }
                                 ]
                             },
                             {
                                 path: 'final',
-                                name: 'crawlerFinalConfig',
-                                component: () => import('/views/crawler/config/Final.vue'),
-                                meta: {
-                                    title: '最终配置表'
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        path: 'raw_news',
-                        name: 'rawNews',
-                        component: () => import('/views/crawler/index.vue'),
-                        redirect: {name: 'rawNewsWebsite'},
-                        meta: {
-                            title: '未加工新闻'
-                        },
-                        children: [
-                            {
-                                path: 'website',
-                                name: 'rawNewsWebsite',
-                                component: () => import('/views/crawler/raw_news/Website.vue'),
-                                meta: {
-                                    title: '新闻网站列表'
-                                }
-                            },
-                            {
-                                path: ':websiteName',
-                                name: 'rawNewsWebsiteNews',
-                                component: () => import('/views/crawler/raw_news/News.vue'),
-                                props: true,
-                                meta: {
-                                    title: '新闻列表'
-                                }
-                            },
-                            {
-                                path: ':websiteName/:_id',
-                                name: 'rawNewsWebsiteNewsDetail',
-                                component: () => import('/views/crawler/raw_news/NewsDetail.vue'),
-                                props: true,
-                                meta: {
-                                    title: '新闻内容'
-                                }
+                                name: 'crawlerFinal',
+                                component: () => import('/views/crawler/config/final/index.vue'),
+                                redirect: {name: 'crawlerFinalConfig'},
+                                children: [
+                                    {
+                                        path: 'config',
+                                        name: 'crawlerFinalConfig',
+                                        component: () => import('/views/crawler/config/final/Final.vue'),
+                                        meta: {
+                                            title: '最终配置表'
+                                        }
+                                    },
+                                    {
+                                        path: 'inspect/:_id',
+                                        name: 'crawlerInspect',
+                                        component: () => import('/views/crawler/config/final/Inspect.vue'),
+                                        meta: {
+                                            title: '配置查看'
+                                        }
+                                    }
+                                ]
                             }
                         ]
                     }
@@ -135,7 +109,39 @@ const routes = [
             {
                 path: 'news',
                 name: 'news',
-                component: () => import('/views/news/Manage.vue')
+                component: () => import('/views/news/index.vue'),
+                redirect: {name: 'newsWebsite'},
+                meta: {
+                    title: '新闻管理'
+                },
+                children: [
+                    {
+                        path: 'website',
+                        name: 'newsWebsite',
+                        component: () => import('/views/news/Website.vue'),
+                        meta: {
+                            title: '新闻网站列表'
+                        }
+                    },
+                    {
+                        path: ':websiteName',
+                        name: 'newsWebsiteNews',
+                        component: () => import('/views/news/News.vue'),
+                        props: true,
+                        meta: {
+                            title: '新闻列表'
+                        }
+                    },
+                    {
+                        path: ':websiteName/:_id',
+                        name: 'newsWebsiteNewsDetail',
+                        component: () => import('/views/news/NewsDetail.vue'),
+                        props: true,
+                        meta: {
+                            title: '新闻内容'
+                        }
+                    }
+                ]
             }
         ]
     }
@@ -166,10 +172,7 @@ router.beforeEach(async (to, from) => {
     /* 自动登录或会话保持 */
     if (adminId) {
         const resp = await get('/admin/check_logged', {adminId})
-        if (resp.status !== 200) {
-            ElMessage.error(resp.msg)
-            return '/admin/login'
-        }
+        if (resp === undefined) return '/admin/login'
         /* 既不是自动登录，又不是会话保持，即第一次登录，返回登录页面 */
     } else if (!adminId) {
         ElMessage.error('Please login')
